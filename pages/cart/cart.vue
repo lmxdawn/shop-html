@@ -125,7 +125,7 @@
 		</view>
 
 		<!--tabbar-->
-		<view class="tui-tabbar" :class="{'tui-tabbar-bottom': isTabBar}">
+		<view class="tui-tabbar">
 			<view class="tui-checkAll">
 				<checkbox-group>
 					<label class="tui-checkbox">

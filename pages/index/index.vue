@@ -1,75 +1,77 @@
 <template>
 	<view class="container">
-
-		<!--header-->
-		<view class="tui-header">
-			<view class="tui-category" hover-class="opcity" :hover-stay-time="150" @tap="classify">
-				<tui-icon name="manage-fill" color="#fff" :size="22"></tui-icon>
-				<view class="tui-category-scale">分类</view>
-			</view>
-			<view class="tui-rolling-search">
-				<!-- #ifdef APP-PLUS || MP -->
-				<icon type="search" :size='13' color='#999'></icon>
-				<!-- #endif -->
-				<!-- #ifdef H5 -->
-				<view>
-					<tui-icon name="search" :size='16' color='#999'></tui-icon>
+		<tui-skeleton v-if="skeletonShow" backgroundColor="#fafafa" borderRadius="10rpx"></tui-skeleton>
+		<view class="tui-skeleton">
+			<!--header-->
+			<view class="tui-header">
+				<view class="tui-category tui-skeleton-circular" hover-class="opcity" :hover-stay-time="150" @tap="classify">
+					<tui-icon name="manage-fill" color="#fff" :size="22"></tui-icon>
+					<!--<view class="tui-category-scale">分类</view>-->
 				</view>
-				<!-- #endif -->
-				<swiper vertical autoplay circular interval="8000" class="tui-swiper">
-					<swiper-item v-for="(item,index) in hotSearch" :key="index" class="tui-swiper-item" @tap="search">
-						<view class="tui-hot-item">{{item}}</view>
-					</swiper-item>
-				</swiper>
-			</view>
-		</view>
-		<!--header-->
-		<view class="tui-header-banner">
-			<view class="tui-hot-search">
-				<view>热搜</view>
-				<view class="tui-hot-tag" @tap="search">自热火锅</view>
-				<view class="tui-hot-tag" @tap="search">华为手机</view>
-				<view class="tui-hot-tag" @tap="search">有机酸奶</view>
-				<view class="tui-hot-tag" @tap="search">苹果手机</view>
-			</view>
-			<view class="tui-banner-bg">
-				<view class="tui-primary-bg tui-route-left"></view>
-				<view class="tui-primary-bg tui-route-right"></view>
-				<!--banner-->
-				<view class="tui-banner-box">
-					<swiper :indicator-dots="true" :autoplay="true" :interval="5000" :duration="150" class="tui-banner-swiper"
-							:circular="true" indicator-color="rgba(255, 255, 255, 0.8)" indicator-active-color="#fff">
-						<swiper-item v-for="(item,index) in banner" :key="index" @tap.stop="detail">
-							<image :src="item" class="tui-slide-image" mode="scaleToFill" />
+				<view class="tui-rolling-search tui-skeleton-fillet">
+					<!-- #ifdef APP-PLUS || MP -->
+					<icon type="search" :size='13' color='#999'></icon>
+					<!-- #endif -->
+					<!-- #ifdef H5 -->
+					<view>
+						<tui-icon name="search" :size='16' color='#999'></tui-icon>
+					</view>
+					<!-- #endif -->
+					<swiper vertical autoplay circular interval="8000" class="tui-swiper">
+						<swiper-item v-for="(item,index) in hotSearch" :key="index" class="tui-swiper-item" @tap="search">
+							<view class="tui-hot-item">{{item}}</view>
 						</swiper-item>
 					</swiper>
 				</view>
 			</view>
-		</view>
-
-		<view class="tui-product-category">
-			<view class="tui-category-item" v-for="(item,index) in category" :key="index" @tap="more">
-				<image :src="item.img" class="tui-category-img" mode="scaleToFill"></image>
-				<view class="tui-category-name">{{item.name}}</view>
-			</view>
-		</view>
-
-		<view class="tui-product-box tui-pb-20 tui-bg-white">
-			<view class="tui-group-name" @tap="more">
-				<text>新品推荐</text>
-			</view>
-			<view class="tui-new-box">
-				<view class="tui-new-item" :class="[index!=0 && index!=1 ?'tui-new-mtop':'']" v-for="(item,index) in newProduct"
-					  :key="index" @tap="detail">
-					<image :src="(item.type==1?'new':'discount')+'.png'" class="tui-new-label" v-if="item.isLabel"></image>
-					<view class="tui-title-box">
-						<view class="tui-new-title">{{item.name}}</view>
-						<view class="tui-new-price">
-							<text class="tui-new-present">￥{{item.present}}</text>
-							<text class="tui-new-original">￥{{item.original}}</text>
-						</view>
+			<!--header-->
+			<view class="tui-header-banner">
+				<view class="tui-hot-search">
+					<view class="tui-skeleton-rect">热搜</view>
+					<view class="tui-hot-tag tui-skeleton-fillet" @tap="search">自热火锅</view>
+					<view class="tui-hot-tag tui-skeleton-fillet" @tap="search">华为手机</view>
+					<view class="tui-hot-tag tui-skeleton-fillet" @tap="search">有机酸奶</view>
+					<view class="tui-hot-tag tui-skeleton-fillet" @tap="search">苹果手机</view>
+				</view>
+				<view class="tui-banner-bg">
+					<view class="tui-primary-bg tui-route-left"></view>
+					<view class="tui-primary-bg tui-route-right"></view>
+					<!--banner-->
+					<view class="tui-banner-box">
+						<swiper :indicator-dots="true" :autoplay="true" :interval="5000" :duration="150" class="tui-banner-swiper tui-skeleton-fillet"
+								:circular="true" indicator-color="rgba(255, 255, 255, 0.8)" indicator-active-color="#fff">
+							<swiper-item v-for="(item,index) in banner" :key="index" @tap.stop="detail">
+								<image :src="item" class="tui-slide-image" mode="scaleToFill" />
+							</swiper-item>
+						</swiper>
 					</view>
-					<image :src="item.pic" class="tui-new-img"></image>
+				</view>
+			</view>
+
+			<view class="tui-product-category">
+				<view class="tui-category-item" v-for="(item,index) in category" :key="index" @tap="more">
+					<image :src="item.img" class="tui-category-img tui-skeleton-fillet" mode="scaleToFill"></image>
+					<view class="tui-category-name tui-skeleton-rect">{{item.name}}</view>
+				</view>
+			</view>
+
+			<view class="tui-product-box tui-pb-20 tui-bg-white">
+				<view class="tui-group-name" @tap="more">
+					<text class="tui-skeleton-rect">新品推荐</text>
+				</view>
+				<view class="tui-new-box">
+					<view class="tui-new-item tui-skeleton-fillet" :class="[index!=0 && index!=1 ?'tui-new-mtop':'']" v-for="(item,index) in newProduct"
+						  :key="index" @tap="detail">
+						<image :src="(item.type==1?'new':'discount')+'.png'" class="tui-new-label" v-if="item.isLabel"></image>
+						<view class="tui-title-box">
+							<view class="tui-new-title">{{item.name}}</view>
+							<view class="tui-new-price">
+								<text class="tui-new-present">￥{{item.present}}</text>
+								<text class="tui-new-original">￥{{item.original}}</text>
+							</view>
+						</view>
+						<image :src="item.pic" class="tui-new-img"></image>
+					</view>
 				</view>
 			</view>
 		</view>
@@ -131,25 +133,24 @@
 	import tuiIcon from "../../components/icon/icon"
 	import tuiLoadmore from "../../components/loadmore/loadmore"
 	import tuiNomore from "../../components/nomore/nomore"
+	import tuiSkeleton from "../../components/tui-skeleton/tui-skeleton"
 	export default {
 		components: {
 			tuiIcon,
 			tuiLoadmore,
-			tuiNomore
+			tuiNomore,
+			tuiSkeleton
 		},
 		data() {
 			return {
+				skeletonShow: true,
 				hotSearch: [
 					"休闲零食",
 					"自热火锅",
 					"小冰箱迷你"
 				],
 				banner: [
-					"/static/images/banner/1.jpg",
-					"/static/images/banner/2.jpg",
-					"/static/images/banner/3.jpg",
-					"/static/images/banner/4.jpg",
-					"/static/images/banner/5.jpg"
+					"/static/images/banner/1.jpg"
 				],
 				category: [
 					{
@@ -320,7 +321,9 @@
 			}
 		},
 		onLoad() {
-
+			setTimeout(() => {
+				this.skeletonShow = false
+			}, 1800);
 		},
 		methods: {
 			classify: function() {
@@ -366,7 +369,7 @@
 		position: fixed;
 		left: 0;
 		top: 0;
-		z-index: 999;
+		z-index: 10;
 	}
 
 	.tui-rolling-search {

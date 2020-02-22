@@ -156,7 +156,7 @@
 <style>
 	.tui-skeleton-cmomon {
 		position: absolute;
-		z-index: 99999;
+		z-index: 900;
 		overflow: hidden;
 	}
 
