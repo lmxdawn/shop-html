@@ -1,5 +1,4 @@
-import {UPLOAD_DOMAIN} from "../config/app";
-import {getUploadImagePathToUrl, getDiffYmdBetweenDate} from "../utils/common";
+import {getUploadImagePathToUrl} from "../utils/common";
 
 /**
  * 把上传的图片的 path 路径转为 url 地址
@@ -14,7 +13,7 @@ export function uploadImagePathToUrl(path) {
  * 时间戳格式化
  * @param inputTime
  */
-export function _formatDate(inputTime) {
+export function formatTime(inputTime) {
     let date = new Date(parseInt(inputTime * 1000));
     let y = date.getFullYear();
     let m = date.getMonth() + 1;
@@ -33,7 +32,7 @@ export function _formatDate(inputTime) {
 /**
  * @return {string}
  */
-export function FormatDate(date_str, fmt) {
+export function formatDate(date_str, fmt) {
     date_str =
         typeof date_str === "string" ? date_str.replace(/-/g, "/").replace(".000", "") : date_str;
     let date = new Date(date_str);
@@ -66,35 +65,4 @@ export function FormatDate(date_str, fmt) {
                     : ("00" + o[k]).substr(("" + o[k]).length)
             );
     return fmt;
-}
-
-/**
- * 计算年龄
- * 计算年份->计算月份->计算天数
- * @param date
- * @returns {string}
- */
-export function filterDateToAge(date) {
-    if (!date || date.length === 0) {
-        return "";
-    }
-    let date2 = FormatDate(new Date(), "yyyy-MM-dd");
-    let res = getDiffYmdBetweenDate(date, date2);
-    let str = (res.y > 0 ? res.y + "岁" : "" ) + (res.m > 0 ? (res.m < 10 && res.y > 0 ? "零" + res.m : res.m) + "个月" : "") + (res.d > 0 ? (res.d < 10 && res.m > 0 ? "零" + res.d : res.d) + "天" : "");
-    return str ? str : "0岁";
-}
-
-/**
- * 计算年龄
- * 计算年份
- * @param date
- * @returns {string}
- */
-export function filterDateToAgeYear(date) {
-    if (!date || date.length === 0) {
-        return "";
-    }
-    let date2 = FormatDate(new Date(), "yyyy-MM-dd");
-    let res = getDiffYmdBetweenDate(date, date2);
-    return res.y;
 }

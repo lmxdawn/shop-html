@@ -1,7 +1,8 @@
-import amap from "../common/amap-wx";
+import amap from "../libs/amap-wx";
 import { AM_AP_KEY } from "../config/app";
 
-export function getLocation() {
+// 高德
+export function amGetLocation() {
     return new Promise((resolve, reject) => {
         if (process.env.VUE_APP_PLATFORM === 'h5') {
             let data = {

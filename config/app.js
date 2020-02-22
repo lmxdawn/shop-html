@@ -1,7 +1,8 @@
 let API_URL = "";
 let SOCKET_URL = "";
 const UPLOAD_URL = "http://up-z2.qiniu.com";
-const UPLOAD_DOMAIN = "http://youmeng.await.fun";
+const UPLOAD_DOMAIN = "http://test-shop.lmx.cn/upload";
+const STATIC_URL = "http://static.shop.test.cn";
 // 环境判断
 if (process.env.NODE_ENV === 'development') {
     // 测试
@@ -18,5 +19,6 @@ export {
     SOCKET_URL,
     UPLOAD_URL,
     UPLOAD_DOMAIN,
+    STATIC_URL,
     AM_AP_KEY
 }

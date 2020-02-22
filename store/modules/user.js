@@ -1,6 +1,5 @@
 import * as types from "../mutation-types";
 import { memberInfo } from "../../api/member";
-import { navigateTo, getUploadImagePathToUrl, reLaunch } from "../../utils/common";
 import { getToken, delToken, delUserInit } from "../../utils/userAuth";
 
 const state = {
