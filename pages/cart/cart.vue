@@ -44,39 +44,6 @@
 			</view>
 		</checkbox-group>
 
-		<!--商品失效-->
-		<view class="tui-cart-cell  tui-mtop">
-			<view class="tui-activity">
-				<view class="tui-bold">失效商品</view>
-				<view class="tui-buy">
-					<tui-button type="gray" :plain="true" shape="circle" width="200rpx" height="56rpx" :size="24">清空失效商品</tui-button>
-				</view>
-			</view>
-			<view :class="{'tui-invalid-ptop':index!==0}" v-for="(item,index) in 2" :key="index">
-				<tui-swipe-action :actions="actions2">
-					<template v-slot:content>
-						<view class="tui-goods-item">
-							<view class="tui-checkbox tui-invalid-pr">
-								<view class="tui-invalid-text">失效</view>
-							</view>
-							<image src="/static/images/mall/product/4.jpg" class="tui-goods-img opcity" />
-							<view class="tui-goods-info">
-								<view class="tui-goods-title tui-gray">
-									欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜彩粉嫩透亮修颜霜透亮修颜霜透亮修颜霜
-								</view>
-								<view class="tui-price-box tui-flex-center">
-									<view class="tui-goods-invalid">产品失效</view>
-									<view class="tui-btn-alike">
-										<tui-button type="white" :plain="true" shape="circle" width="120rpx" height="48rpx" :size="24">找相似</tui-button>
-									</view>
-								</view>
-							</view>
-						</view>
-					</template>
-				</tui-swipe-action>
-			</view>
-		</view>
-
 		<!--猜你喜欢-->
 
 		<tui-divider :size="28" :bold="true" color="#333" width="50%">
@@ -142,7 +109,7 @@
 		</view>
 		<!--加载loadding-->
 		<tui-loadmore :visible="loadding" :index="3" type="red"></tui-loadmore>
-		<tui-nomore :visible="!pullUpOn" bgcolor="#f2f2f2"></tui-nomore>
+		<tui-nomore :visible="!pullUpOn" bgcolor="#fafafa"></tui-nomore>
 	</view>
 </template>
 
