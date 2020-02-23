@@ -481,7 +481,7 @@
 		box-sizing: border-box;
 		position: absolute;
 		/* overflow: hidden; */
-		z-index: 99;
+		z-index: 9;
 		bottom: -80rpx;
 		left: 0;
 	}
