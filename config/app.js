@@ -6,7 +6,7 @@ const STATIC_URL = "http://static.shop.test.cn";
 // 环境判断
 if (process.env.NODE_ENV === 'development') {
     // 测试
-    API_URL = "http://47.107.230.123:8080";
+    API_URL = "http://test-shop.lmx.cn";
     SOCKET_URL = "ws://47.107.230.123:8080/websocket";
 } else {
     // 正式

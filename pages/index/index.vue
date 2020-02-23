@@ -13,26 +13,15 @@
 					<icon type="search" :size='13' color='#999'></icon>
 					<!-- #endif -->
 					<!-- #ifdef H5 -->
-					<view>
+					<view class="tui-search-icon">
 						<tui-icon name="search" :size='16' color='#999'></tui-icon>
 					</view>
 					<!-- #endif -->
-					<swiper vertical autoplay circular interval="8000" class="tui-swiper">
-						<swiper-item v-for="(item,index) in hotSearch" :key="index" class="tui-swiper-item" @tap="search">
-							<view class="tui-hot-item">{{item}}</view>
-						</swiper-item>
-					</swiper>
+					<view class="tui-swiper">搜索商品</view>
 				</view>
 			</view>
 			<!--header-->
 			<view class="tui-header-banner">
-				<view class="tui-hot-search">
-					<view class="tui-skeleton-rect">热搜</view>
-					<view class="tui-hot-tag tui-skeleton-fillet" @tap="search">自热火锅</view>
-					<view class="tui-hot-tag tui-skeleton-fillet" @tap="search">华为手机</view>
-					<view class="tui-hot-tag tui-skeleton-fillet" @tap="search">有机酸奶</view>
-					<view class="tui-hot-tag tui-skeleton-fillet" @tap="search">苹果手机</view>
-				</view>
 				<view class="tui-banner-bg">
 					<view class="tui-primary-bg tui-route-left"></view>
 					<view class="tui-primary-bg tui-route-right"></view>
@@ -41,7 +30,7 @@
 						<swiper :indicator-dots="true" :autoplay="true" :interval="5000" :duration="150" class="tui-banner-swiper tui-skeleton-fillet"
 								:circular="true" indicator-color="rgba(255, 255, 255, 0.8)" indicator-active-color="#fff">
 							<swiper-item v-for="(item,index) in banner" :key="index" @tap.stop="detail">
-								<image :src="item" class="tui-slide-image" mode="scaleToFill" />
+								<image v-if="item.ad_id > 0" :src="item.pic" class="tui-slide-image" mode="scaleToFill" />
 							</swiper-item>
 						</swiper>
 					</view>
@@ -50,8 +39,8 @@
 
 			<view class="tui-product-category">
 				<view class="tui-category-item" v-for="(item,index) in category" :key="index" @tap="more">
-					<image :src="item.img" class="tui-category-img tui-skeleton-fillet" mode="scaleToFill"></image>
-					<view class="tui-category-name tui-skeleton-rect">{{item.name}}</view>
+					<image :src="item.pic" class="tui-category-img tui-skeleton-fillet" mode="scaleToFill"></image>
+					<view class="tui-category-name tui-skeleton-rect">{{item.title}}</view>
 				</view>
 			</view>
 
@@ -62,15 +51,14 @@
 				<view class="tui-new-box">
 					<view class="tui-new-item tui-skeleton-fillet" :class="[index!=0 && index!=1 ?'tui-new-mtop':'']" v-for="(item,index) in newProduct"
 						  :key="index" @tap="detail">
-						<image :src="(item.type==1?'new':'discount')+'.png'" class="tui-new-label" v-if="item.isLabel"></image>
 						<view class="tui-title-box">
-							<view class="tui-new-title">{{item.name}}</view>
+							<view class="tui-new-title">{{item.good_name}}</view>
 							<view class="tui-new-price">
-								<text class="tui-new-present">￥{{item.present}}</text>
-								<text class="tui-new-original">￥{{item.original}}</text>
+								<text class="tui-new-present">￥{{item.shop_price}}</text>
+								<text class="tui-new-original">￥{{item.market_price}}</text>
 							</view>
 						</view>
-						<image :src="item.pic" class="tui-new-img"></image>
+						<image :src="item.original_img" class="tui-new-img"></image>
 					</view>
 				</view>
 			</view>
@@ -134,6 +122,7 @@
 	import tuiLoadmore from "../../components/loadmore/loadmore"
 	import tuiNomore from "../../components/nomore/nomore"
 	import tuiSkeleton from "../../components/tui-skeleton/tui-skeleton"
+	import { otherIndex } from "../../api/other";
 	export default {
 		components: {
 			tuiIcon,
@@ -144,106 +133,9 @@
 		data() {
 			return {
 				skeletonShow: true,
-				hotSearch: [
-					"休闲零食",
-					"自热火锅",
-					"小冰箱迷你"
-				],
-				banner: [
-					"/static/images/banner/1.jpg"
-				],
-				category: [
-					{
-						img: "/static/images/category/1.jpg",
-						name: "短袖T恤"
-					},
-					{
-						img: "/static/images/category/2.jpg",
-						name: "足球"
-					},
-					{
-						img: "/static/images/category/3.jpg",
-						name: "运动鞋"
-					},
-					{
-						img: "/static/images/category/4.png",
-						name: "中老年"
-					},
-					{
-						img: "/static/images/category/5.png",
-						name: "甜美风"
-					},
-					{
-						img: "/static/images/category/6.jpg",
-						name: "鱼尾裙"
-					},
-					{
-						img: "/static/images/category/7.jpg",
-						name: "相机配件"
-					},
-					{
-						img: "/static/images/category/8.jpg",
-						name: "护肤套装"
-					},
-					{
-						img: "/static/images/category/9.jpg",
-						name: "单肩包"
-					},
-					{
-						img: "/static/images/category/10.jpg",
-						name: "卫衣"
-					}
-				],
-				newProduct: [
-					{
-						name: "时尚舒适公主裙高街修身长裙",
-						present: 198,
-						original: 298,
-						pic: "/static/images/new/1.jpg",
-						type: 1,
-						isLabel: true
-					},
-					{
-						name: "高街修身雪纺衫",
-						present: 398,
-						original: 598,
-						pic: "/static/images/new/2.jpg",
-						type: 2,
-						isLabel: true
-					},
-					{
-						name: "轻奢商务上衣",
-						present: 99,
-						original: 199,
-						pic: "/static/images/new/3.jpg",
-						type: 1,
-						isLabel: true
-					},
-					{
-						name: "品质牛皮婚鞋牛皮婚鞋品质就是好",
-						present: 99,
-						original: 199,
-						pic: "/static/images/new/5.jpg",
-						type: 1,
-						isLabel: true
-					},
-					{
-						name: "轻奢时尚大包限时新品推荐",
-						present: 99,
-						original: 199,
-						pic: "/static/images/new/6.jpg",
-						type: 1,
-						isLabel: false
-					},
-					{
-						name: "高街修身长裙",
-						present: 999,
-						original: 1299,
-						pic: "/static/images/new/4.jpg",
-						type: 2,
-						isLabel: true
-					}
-				],
+				banner: [{}],
+				category: [{},{},{},{},{},{},{},{},{},{}],
+				newProduct: [{},{},{},{}],
 				productList: [
 					{
 						img: "/static/images/product/1.jpg",
@@ -321,11 +213,12 @@
 			}
 		},
 		onLoad() {
-			setTimeout(() => {
-				this.skeletonShow = false
-			}, 1800);
+			this.init();
 		},
 		methods: {
+			init() {
+				this.getOtherIndex();
+			},
 			classify: function() {
 				uni.navigateTo({
 					url: '/pages/cart/cart'
@@ -342,6 +235,14 @@
 			search: function() {
 				uni.navigateTo({
 					url: '../news-search/news-search'
+				})
+			},
+			getOtherIndex() {
+				otherIndex().then(res => {
+					this.skeletonShow = false;
+					this.category = res.data.cate_list || [];
+					this.banner = res.data.banner_list || [];
+					this.newProduct = res.data.good_recommend_list || [];
 				})
 			}
 		}
@@ -402,9 +303,15 @@
 		line-height: 24rpx;
 	}
 
+	.tui-search-icon {
+		height: 60rpx;
+		line-height: 60rpx;
+	}
+
 	.tui-swiper {
 		font-size: 26rpx;
 		height: 60rpx;
+		line-height: 60rpx;
 		flex: 1;
 		padding-left: 12rpx;
 	}
@@ -584,6 +491,8 @@
 	}
 
 	.tui-category-name {
+		min-width: 80rpx;
+		min-height: 25rpx;
 		line-height: 24rpx;
 	}
 
