@@ -11,7 +11,7 @@
 
 		<view :style="{height:height+'px',marginTop:top+'px'}" class="tab-main">
 			<tui-skeleton v-if="skeletonShow" backgroundColor="#fafafa" borderRadius="10rpx"></tui-skeleton>
-			<tui-skeleton selector="tui-skeleton-good" v-if="goodSkeletonShow" backgroundColor="#fafafa" borderRadius="10rpx" style="z-index: 890;" :isLoading="false"></tui-skeleton>
+			<tui-skeleton selector="tui-skeleton-good" v-if="goodSkeletonShow" backgroundColor="#fafafa" borderRadius="10rpx" :z-index="890" :isLoading="false"></tui-skeleton>
 			<view class="tui-skeleton tui-skeleton-good" style="height: 100%;">
 				<scroll-view scroll-y scroll-with-animation class="tab-view" :scroll-top="scrollTop" :style="{height:height+'px'}">
 					<view v-for="(item,index) in tabBar" :key="index" class="tab-bar-item tui-skeleton-rect" :class="[currentTab===index ? 'active' : '']" @tap.stop="swichNav(index)">
