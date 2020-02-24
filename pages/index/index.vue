@@ -8,7 +8,7 @@
 					<tui-icon name="manage-fill" color="#fff" :size="22"></tui-icon>
 					<!--<view class="tui-category-scale">分类</view>-->
 				</view>
-				<view class="tui-rolling-search tui-skeleton-fillet">
+				<view class="tui-rolling-search tui-skeleton-fillet" @tap="search">
 					<!-- #ifdef APP-PLUS || MP -->
 					<icon type="search" :size='13' color='#999'></icon>
 					<!-- #endif -->
@@ -38,14 +38,14 @@
 			</view>
 
 			<view class="tui-product-category">
-				<view class="tui-category-item" v-for="(item,index) in category" :key="index" @tap="more">
+				<view class="tui-category-item" v-for="(item,index) in category" :key="index" @tap="categoryClick(item)">
 					<image :src="item.pic" class="tui-category-img tui-skeleton-fillet" mode="scaleToFill"></image>
 					<view class="tui-category-name tui-skeleton-rect">{{item.title}}</view>
 				</view>
 			</view>
 
 			<view class="tui-product-box tui-pb-20 tui-bg-white">
-				<view class="tui-group-name" @tap="more">
+				<view class="tui-group-name">
 					<text class="tui-skeleton-rect">新品推荐</text>
 				</view>
 				<view class="tui-new-box">
@@ -54,8 +54,8 @@
 						<view class="tui-title-box">
 							<view class="tui-new-title">{{item.good_name}}</view>
 							<view class="tui-new-price">
-								<text class="tui-new-present">￥{{item.shop_price}}</text>
-								<text class="tui-new-original">￥{{item.market_price}}</text>
+								<view class="tui-new-present"><text style="letter-spacing: -2px;">￥</text>{{item.shop_price}}</view>
+								<view class="tui-new-original">￥{{item.market_price}}</view>
 							</view>
 						</view>
 						<image :src="item.original_img" class="tui-new-img"></image>
@@ -165,22 +165,22 @@
 				this.loadMore();
 			},
 			classify: function() {
-				uni.navigateTo({
-					url: '/pages/cart/cart'
-				})
-
+				this.$tui.switchTab("category/category");
 			},
-			more: function(e) {
-				let key = e.currentTarget.dataset.key || "";
-				uni.navigateTo({
-					url: '../productList/productList?searchKey=' + key
-				})
-
+			categoryClick(item) {
+				if (item.jump_type === 0) {
+					// web
+					this.$tui.jumpWebView(item.jump_url);
+				} else if (item.jump_type === 3) {
+					// uniapp内部链接
+					this.$tui.navigateTo(item.jump_url);
+				} else if (item.jump_type === 4){
+					// uniapptabBar链接
+					this.$tui.switchTab(item.jump_url);
+				}
 			},
 			search: function() {
-				uni.navigateTo({
-					url: '../news-search/news-search'
-				})
+				this.$tui.navigateTo("search/search");
 			},
 			getOtherIndex() {
 				otherIndex()
@@ -513,6 +513,14 @@
 
 	.tui-title-box {
 		font-size: 24rpx;
+		width: 100%;
+		padding-right: 10rpx;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		justify-content: space-between;
+		box-sizing: border-box;
+		word-break: break-all;
 	}
 
 	.tui-new-title {
@@ -527,25 +535,27 @@
 
 	.tui-new-price {
 		padding-top: 18rpx;
+		display: flex;
+		flex-wrap: wrap;
 	}
 
 	.tui-new-present {
 		color: #ff201f;
 		font-weight: bold;
+		word-break: normal;
 	}
 
 	.tui-new-original {
 		display: inline-block;
 		color: #a0a0a0;
 		text-decoration: line-through;
-		padding-left: 12rpx;
 		transform: scale(0.8);
 		transform-origin: center center;
 	}
 
 	.tui-new-img {
-		width: 160rpx;
-		height: 160rpx;
+		width: 150rpx;
+		height: 150rpx;
 		display: block;
 		flex-shrink: 0;
 	}

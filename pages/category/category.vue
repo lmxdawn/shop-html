@@ -5,7 +5,7 @@
 				<!-- #ifdef APP-PLUS || MP -->
 				<icon type="search" size='13' color='#999'></icon>
 				<!-- #endif -->
-				<text class="tui-search-text">搜索Thorui商品</text>
+				<text class="tui-search-text">搜索商品</text>
 			</view>
 		</view>
 
@@ -202,9 +202,7 @@
 				})
 			},
 			search() {
-				uni.navigateTo({
-					url: '../extend-view/news-search/news-search'
-				})
+				this.$tui.navigateTo("search/search");
 			},
 			getGoodCategoryList() {
 				goodCategoryList()
@@ -520,6 +518,7 @@
 		text-align: center;
 		background-image: linear-gradient(#fd5609, #fc8b3f);
 		position: relative;
+		flex-shrink: 0;
 	}
 	.tab-list-scale-tag {
 		position: absolute;

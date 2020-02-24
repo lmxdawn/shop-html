@@ -2,7 +2,7 @@ import Vue from 'vue'
 import App from './App'
 import store from './store'
 
-import { toast } from "./utils/common";
+import { toast, navigateTo, switchTab, jumpWebView } from "./utils/common";
 import { STATIC_URL } from "./config/app";
 import * as filters from "./filters/index"; // 全局过滤器
 
@@ -22,6 +22,15 @@ const tui = {
     },
     staticUrl() {
         return STATIC_URL;
+    },
+    navigateTo(path) {
+        navigateTo(path)
+    },
+    switchTab(path) {
+        switchTab(path)
+    },
+    jumpWebView(url) {
+        jumpWebView(url)
     }
 };
 
