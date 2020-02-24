@@ -175,6 +175,12 @@
 					// uniapp内部链接
 					this.$tui.navigateTo(item.jump_url);
 				} else if (item.jump_type === 4){
+					let str = item.jump_url.split('?')[1];
+					let arr = str.split('&');
+					for (let valueItem of arr) {
+						let valueArr = str.split('=');
+						this.$store.dispatch("setAdParams", {key: valueArr[0], value: valueArr[1]});
+					}
 					// uniapptabBar链接
 					this.$tui.switchTab(item.jump_url);
 				}

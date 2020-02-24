@@ -7,6 +7,7 @@ const state = {
     PhoneFirstLoadUrl: "", //用户第一次加载的url， vue框架在微信浏览器路由时url不会变
     currentDate: Math.floor(new Date().getTime() / 1000), //当前日期 会用服务器返回的数据
     guide: getStorageSync(guideKey) || false, // 引导页面
+    adParams: {}, // 引导页面
 };
 
 // getters
@@ -14,6 +15,7 @@ const getters = {
     PhoneFirstLoadUrl: state => state.PhoneFirstLoadUrl,
     currentDate: state => state.currentDate,
     guide: state => state.guide,
+    adParams: state => state.adParams,
 };
 
 // actions
@@ -26,6 +28,9 @@ const actions = {
     },
     setGuide({ commit }, guide) {
         commit(types.GUIDE, guide);
+    },
+    setAdParams({ commit }, item) {
+        commit(types.AD_PARAMS, item);
     }
 };
 
@@ -43,6 +48,10 @@ const mutations = {
     [types.GUIDE](state, guide) {
         state.guide = guide;
         setStorageSync(guideKey, guide);
+    },
+    // 广告跳转到 tabBar 的参数
+    [types.AD_PARAMS](state, item) {
+        state.adParams[item.key] = item.value;
     }
 };
 export default {

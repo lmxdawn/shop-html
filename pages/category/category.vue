@@ -73,6 +73,7 @@
 	import tuiSkeleton from "../../components/tui-skeleton/tui-skeleton"
 	import { goodCategoryList } from "../../api/goodCategory";
 	import { goodList } from "../../api/good";
+	import { mapGetters } from "vuex";
 	export default {
 		components: {
 			tuiIcon,
@@ -80,6 +81,11 @@
 			tuiLoadmore,
 			tuiNomore,
 			tuiSkeleton
+		},
+		computed: {
+			...mapGetters({
+				adParams: "adParams",
+			})
 		},
 		data() {
 			return {
@@ -102,7 +108,8 @@
 					page: 1,
 					count: 20,
 					category_id: "",
-				}
+				},
+				category_id: ""
 			}
 		},
 		onLoad: function(options) {
@@ -113,12 +120,13 @@
 						let top = 0;
 						this.height = res.windowHeight - uni.upx2px(header);
 						this.top = top + uni.upx2px(header);
-						this.skeletonShow = true;
-						this.goodSkeletonShow = true;
 						this.init();
 					}
 				});
 			}, 50);
+		},
+		onShow() {
+			this.init();
 		},
 		onPullDownRefresh() {
 			// 清空之前的
@@ -132,6 +140,12 @@
 		},
 		methods: {
 			init() {
+				this.skeletonShow = true;
+				this.goodSkeletonShow = true;
+				if (this.adParams.category_id) {
+					this.category_id = this.adParams.category_id;
+					this.$store.dispatch("setAdParams", {key: "category_id", value: ""});
+				}
 				this.getGoodCategoryList();
 			},
 			// 点击标题切换当前页时改变样式
@@ -210,6 +224,13 @@
 						this.skeletonShow = false;
 						uni.stopPullDownRefresh();
 						const list = res.data || [];
+						let index = 0;
+						for (let item of list) {
+							if (this.category_id == item.id) {
+								this.currentTab = index;
+							}
+							index++;
+						}
 						let category_id = "";
 						let count = 0;
 						for (let item of list) {
@@ -220,7 +241,7 @@
 									let cCCount = 0;
 									if (cItem.children) {
 										for (let cCItem of cItem.children) {
-											if (count === 0 && cCount === 0 && cCCount === this.currentTopTab) {
+											if (count === this.currentTab && cCount === 0 && cCCount === this.currentTopTab) {
 												category_id = cCItem.id;
 											}
 											this.tabBarMap[count].push(cCItem);
