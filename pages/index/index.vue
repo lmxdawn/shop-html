@@ -73,15 +73,15 @@
 					<block v-for="(item,index) in productList" :key="index" v-if="(index+1)%2!=0">
 						<!--商品列表-->
 						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
-							<image :src="item.img" class="tui-pro-img" mode="widthFix" />
+							<image :src="item.original_img" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
-								<view class="tui-pro-tit">{{item.name}}</view>
+								<view class="tui-pro-tit">{{item.good_name}}</view>
 								<view>
 									<view class="tui-pro-price">
-										<text class="tui-sale-price">￥{{item.sale}}</text>
-										<text class="tui-factory-price">￥{{item.factory}}</text>
+										<text class="tui-sale-price">￥{{item.shop_price}}</text>
+										<text class="tui-factory-price">￥{{item.market_price}}</text>
 									</view>
-									<view class="tui-pro-pay">{{item.payNum}}人付款</view>
+									<view class="tui-pro-pay">已售{{item.sales_sum}}{{item.unit}}</view>
 								</view>
 							</view>
 						</view>
@@ -92,15 +92,15 @@
 					<block v-for="(item,index) in productList" :key="index" v-if="(index+1)%2==0">
 						<!--商品列表-->
 						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
-							<image :src="item.img" class="tui-pro-img" mode="widthFix" />
+							<image :src="item.original_img" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
-								<view class="tui-pro-tit">{{item.name}}</view>
+								<view class="tui-pro-tit">{{item.good_name}}</view>
 								<view>
 									<view class="tui-pro-price">
-										<text class="tui-sale-price">￥{{item.sale}}</text>
-										<text class="tui-factory-price">￥{{item.factory}}</text>
+										<text class="tui-sale-price">￥{{item.shop_price}}</text>
+										<text class="tui-factory-price">￥{{item.market_price}}</text>
 									</view>
-									<view class="tui-pro-pay">{{item.payNum}}人付款</view>
+									<view class="tui-pro-pay">已售{{item.sales_sum}}{{item.unit}}</view>
 								</view>
 							</view>
 						</view>
@@ -111,8 +111,8 @@
 		</view>
 
 		<!--加载loadding-->
-		<tui-loadmore :visible="loadding" :index="3" type="primary"></tui-loadmore>
-		<tui-nomore :visible="!pullUpOn" bgcolor="#f2f2f2"></tui-nomore>
+		<tui-loadmore :visible="loading" :index="3" type="primary"></tui-loadmore>
+		<tui-nomore :visible="!isLoadMore" bgcolor="#f7f7f7"></tui-nomore>
 		<!--加载loadding-->
 	</view>
 </template>
@@ -123,6 +123,7 @@
 	import tuiNomore from "../../components/nomore/nomore"
 	import tuiSkeleton from "../../components/tui-skeleton/tui-skeleton"
 	import { otherIndex } from "../../api/other";
+	import { goodRecommend } from "../../api/good";
 	export default {
 		components: {
 			tuiIcon,
@@ -136,88 +137,32 @@
 				banner: [{}],
 				category: [{},{},{},{},{},{},{},{},{},{}],
 				newProduct: [{},{},{},{}],
-				productList: [
-					{
-						img: "/static/images/product/1.jpg",
-						name: "欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）",
-						sale: 599,
-						factory: 899,
-						payNum: 2342
-					},
-					{
-						img: "/static/images/product/2.jpg",
-						name: "德国DMK进口牛奶  欧德堡（Oldenburger）超高温处理全脂纯牛奶1L*12盒",
-						sale: 29,
-						factory: 69,
-						payNum: 999
-					},
-					{
-						img: "/static/images/product/3.jpg",
-						name: "【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红",
-						sale: 299,
-						factory: 699,
-						payNum: 666
-					},
-					{
-						img: "/static/images/product/4.jpg",
-						name: "百雀羚套装女补水保湿护肤品",
-						sale: 1599,
-						factory: 2899,
-						payNum: 236
-					},
-					{
-						img: "/static/images/product/5.jpg",
-						name: "百草味 肉干肉脯 休闲零食 靖江精制猪肉脯200g/袋",
-						sale: 599,
-						factory: 899,
-						payNum: 2399
-					},
-					{
-						img: "/static/images/product/6.jpg",
-						name: "短袖睡衣女夏季薄款休闲家居服短裤套装女可爱韩版清新学生两件套 短袖粉色长颈鹿 M码75-95斤",
-						sale: 599,
-						factory: 899,
-						payNum: 2399
-					},
-					{
-						img: "/static/images/product/1.jpg",
-						name: "欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜",
-						sale: 599,
-						factory: 899,
-						payNum: 2342
-					},
-					{
-						img: "/static/images/product/2.jpg",
-						name: "德国DMK进口牛奶",
-						sale: 29,
-						factory: 69,
-						payNum: 999
-					},
-					{
-						img: "/static/images/product/3.jpg",
-						name: "【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红",
-						sale: 299,
-						factory: 699,
-						payNum: 666
-					},
-					{
-						img: "/static/images/product/4.jpg",
-						name: "百雀羚套装女补水保湿护肤品",
-						sale: 1599,
-						factory: 2899,
-						payNum: 236
-					}
-				],
-				loadding: false,
-				pullUpOn: true
+				productList: [],
+				loading: false,
+				isLoadMore: true,
+				params: {
+					page: 1,
+					count: 20
+				}
 			}
 		},
 		onLoad() {
 			this.init();
 		},
+		onPullDownRefresh() {
+			// 清空之前的
+			this.productList = [];
+			this.params.page = 1;
+			this.isLoadMore = true;
+			this.init();
+		},
+		onReachBottom() {
+			this.loadMore();
+		},
 		methods: {
 			init() {
 				this.getOtherIndex();
+				this.loadMore();
 			},
 			classify: function() {
 				uni.navigateTo({
@@ -238,12 +183,38 @@
 				})
 			},
 			getOtherIndex() {
-				otherIndex().then(res => {
-					this.skeletonShow = false;
-					this.category = res.data.cate_list || [];
-					this.banner = res.data.banner_list || [];
-					this.newProduct = res.data.good_recommend_list || [];
-				})
+				otherIndex()
+					.then(res => {
+						this.skeletonShow = false;
+						uni.stopPullDownRefresh();
+						this.category = res.data.cate_list || [];
+						this.banner = res.data.banner_list || [];
+						this.newProduct = res.data.good_new_list || [];
+					})
+			},
+			loadMore() {
+				if (!this.isLoadMore) {
+					return false;
+				}
+				this.getRecommendGood();
+			},
+			getRecommendGood() {
+				if (this.loading) {
+					return false;
+				}
+				this.loading = true;
+				goodRecommend()
+						.then(res => {
+							this.loading = false;
+							this.params.page++;
+							const list = res.data || [];
+							for (let item of list) {
+								this.productList.push(item);
+							}
+							if (list.length < this.params.count) {
+								this.isLoadMore = false;
+							}
+						})
 			}
 		}
 	}

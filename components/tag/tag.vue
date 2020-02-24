@@ -265,6 +265,15 @@
   line-height: 28upx;
 }
 
+.tui-tag-mini {
+  padding: 5upx 8upx;
+  font-size: 24upx;
+  border-radius: 6upx;
+  /* display: inline-block;
+  vertical-align: middle; */
+  line-height: 18upx;
+}
+
 .tui-tag-small {
   padding: 10upx 16upx;
   font-size: 24upx;

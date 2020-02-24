@@ -22,6 +22,8 @@
 			"path": "pages/category/category",
 			"style": {
 				"navigationBarTitleText": "分类",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 50,
 				"h5": {
 					"titleNView": false
 				}
