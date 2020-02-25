@@ -14,16 +14,16 @@
 			<tui-skeleton selector="tui-skeleton-good" v-if="goodSkeletonShow" backgroundColor="#fafafa" borderRadius="10rpx" :z-index="890" :isLoading="false"></tui-skeleton>
 			<view class="tui-skeleton tui-skeleton-good" style="height: 100%;">
 				<scroll-view scroll-y scroll-with-animation class="tab-view" :scroll-top="scrollTop" :style="{height:height+'px'}">
-					<view v-for="(item,index) in tabBar" :key="index" class="tab-bar-item tui-skeleton-rect" :class="[currentTab===index ? 'active' : '']" @tap.stop="swichNav(index)">
+					<view v-for="(item,index) in tabBar" :key="index" class="tab-bar-item tui-skeleton-rect" :class="[currentTab===index ? 'active' : '']" @tap.stop="swichNav(index, item)">
 						<text>{{item.name}}</text>
 					</view>
 				</scroll-view>
-				<scroll-view scroll-x scroll-with-animation class="tab-top-view" :scroll-left="scrollLeft">
+				<scroll-view v-if="topTabBar.length > 0" scroll-x scroll-with-animation class="tab-top-view" :scroll-left="scrollLeft">
 					<view v-for="(itemTop,indexTop) in topTabBar" :key="indexTop" class="tab-top-bar-item tui-skeleton-fillet" :class="[currentTopTab===indexTop ? 'active' : '']" @tap.stop="swichTopNav(indexTop, itemTop)">
 						<text class="tab-bar-title">{{itemTop.name}}</text>
 					</view>
 				</scroll-view>
-				<view class="tab-list">
+				<view class="tab-list" :class="{'tab-list-top-bar': isTopTabBar > 0}">
 					<scroll-view scroll-y scroll-with-animation class="tab-list-scroll">
 						<view class="tab-list-item" v-for="(goodItem, goodIndex) in goods" :key="goodIndex">
 							<image :src="goodItem.original_img" class="tab-list-item-img tui-skeleton-fillet tui-skeleton-good-fillet" mode="widthFix" />
@@ -92,6 +92,7 @@
 				tabBar: [{},{},{},{},{},{},{},{},{},{},{}],
 				tabBarMap: {},
 				topTabBar: [{},{},{},{},{}],
+				isTopTabBar: true,
 				height: 0, //scroll-view高度
 				top: 0,
 				currentTab: 0, //预设当前项的值
@@ -149,7 +150,7 @@
 				this.getGoodCategoryList();
 			},
 			// 点击标题切换当前页时改变样式
-			swichNav(index) {
+			swichNav(index, item) {
 				if (this.currentTab === index) {
 					return false;
 				}
@@ -158,14 +159,17 @@
 				this.checkCor();
 				const topTabBar = this.tabBarMap[index] || [];
 				if (topTabBar.length === 0) {
-					this.params.category_id = 0;
-				}
-				let count = 0;
-				for (let item of topTabBar) {
-					if (count === this.currentTopTab) {
-						this.params.category_id = item.id;
+					this.params.category_id = item.id;
+					this.isTopTabBar = false;
+				} else {
+					this.isTopTabBar = true;
+					let count = 0;
+					for (let item of topTabBar) {
+						if (count === this.currentTopTab) {
+							this.params.category_id = item.id;
+						}
+						count++;
 					}
-					count++;
 				}
 				this.topTabBar = topTabBar;
 				this.getSelectGoodList();
@@ -253,6 +257,10 @@
 							}
 							if (count === this.currentTab) {
 								this.topTabBar = this.tabBarMap[count];
+								if (category_id === "") {
+									category_id = item.id;
+									this.isTopTabBar = false;
+								}
 							}
 							count++;
 						}
@@ -444,9 +452,13 @@
 	.tab-list {
 		height: 100%;
 		box-sizing: border-box;
-		padding-top: 80rpx;
+		padding-top: 0;
 		padding-left: 220rpx;
 		padding-right: 20upx;
+	}
+
+	.tab-list-top-bar {
+		padding-top: 80rpx;
 	}
 
 	.tab-list-scroll {
