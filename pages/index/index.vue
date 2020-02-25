@@ -50,12 +50,12 @@
 				</view>
 				<view class="tui-new-box">
 					<view class="tui-new-item tui-skeleton-fillet" :class="[index!=0 && index!=1 ?'tui-new-mtop':'']" v-for="(item,index) in newProduct"
-						  :key="index" @tap="detail">
+						  :key="index" @tap="goodDetail(item)">
 						<view class="tui-title-box">
 							<view class="tui-new-title">{{item.good_name}}</view>
 							<view class="tui-new-price">
 								<view class="tui-new-present"><text style="letter-spacing: -2px;">￥</text>{{item.shop_price}}</view>
-								<view class="tui-new-original">￥{{item.market_price}}</view>
+								<view class="tui-new-original">￥{{item.cost_price}}</view>
 							</view>
 						</view>
 						<image :src="item.original_img" class="tui-new-img"></image>
@@ -72,14 +72,14 @@
 				<view class="tui-product-container">
 					<block v-for="(item,index) in productList" :key="index" v-if="(index+1)%2!=0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="goodDetail(item)">
 							<image :src="item.original_img" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
 								<view class="tui-pro-tit">{{item.good_name}}</view>
 								<view>
 									<view class="tui-pro-price">
 										<text class="tui-sale-price">￥{{item.shop_price}}</text>
-										<text class="tui-factory-price">￥{{item.market_price}}</text>
+										<text class="tui-factory-price">￥{{item.cost_price}}</text>
 									</view>
 									<view class="tui-pro-pay">已售{{item.sales_sum}}{{item.unit}}</view>
 								</view>
@@ -91,14 +91,14 @@
 				<view class="tui-product-container">
 					<block v-for="(item,index) in productList" :key="index" v-if="(index+1)%2==0">
 						<!--商品列表-->
-						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
+						<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="goodDetail(item)">
 							<image :src="item.original_img" class="tui-pro-img" mode="widthFix" />
 							<view class="tui-pro-content">
 								<view class="tui-pro-tit">{{item.good_name}}</view>
 								<view>
 									<view class="tui-pro-price">
 										<text class="tui-sale-price">￥{{item.shop_price}}</text>
-										<text class="tui-factory-price">￥{{item.market_price}}</text>
+										<text class="tui-factory-price">￥{{item.cost_price}}</text>
 									</view>
 									<view class="tui-pro-pay">已售{{item.sales_sum}}{{item.unit}}</view>
 								</view>
@@ -163,6 +163,9 @@
 			init() {
 				this.getOtherIndex();
 				this.loadMore();
+			},
+			goodDetail(item) {
+				this.$tui.navigateTo("productDetail/productDetail?good_id=" + item.good_id);
 			},
 			classify: function() {
 				this.$tui.switchTab("category/category");

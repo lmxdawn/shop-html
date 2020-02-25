@@ -128,7 +128,22 @@
 			"style": {
 				"navigationBarTitleText": "提交订单",
 				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black"
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": true,
+				"h5": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/orderDetail/orderDetail",
+			"style": {
+				"navigationBarTitleText": "订单详情",
+				"navigationBarBackgroundColor": "#fff",
+				"navigationBarTextStyle": "black",
+				"h5": {
+					"titleNView": false
+				}
 			}
 		},
 		{

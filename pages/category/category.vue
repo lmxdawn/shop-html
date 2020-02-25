@@ -25,7 +25,7 @@
 				</scroll-view>
 				<view class="tab-list" :class="{'tab-list-top-bar': isTopTabBar > 0}">
 					<scroll-view scroll-y scroll-with-animation class="tab-list-scroll">
-						<view class="tab-list-item" v-for="(goodItem, goodIndex) in goods" :key="goodIndex">
+						<view class="tab-list-item" v-for="(goodItem, goodIndex) in goods" :key="goodIndex" @tap="goodDetail(goodItem)">
 							<image :src="goodItem.original_img" class="tab-list-item-img tui-skeleton-fillet tui-skeleton-good-fillet" mode="widthFix" />
 							<view class="tab-list-info">
 								<view class="tab-list-title tui-skeleton-rect tui-skeleton-good-rect">{{goodItem.good_name || "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"}}</view>
@@ -45,7 +45,7 @@
 										</view>
 										<view class="tab-list-price-market">
 											<text class="tab-list-price-symbol">￥</text>
-											{{goodItem.market_price || '0.00'}}
+											{{goodItem.cost_price || '0.00'}}
 										</view>
 									</view>
 									<view class="tab-list-scale tui-skeleton-circular tui-skeleton-good-circular" @tap.stop="cartAdd(goodIndex, goodItem)">
@@ -229,16 +229,8 @@
 			cartAdd(index, item) {
 				this.goods[index].cart_num++;
 			},
-			detail(e) {
-				uni.navigateTo({
-					url: '../extend-view/productDetail/productDetail'
-				})
-			},
-			productList(e) {
-				let key = e.currentTarget.dataset.key;
-				uni.navigateTo({
-					url: '../extend-view/productList/productList?searchKey=' + key
-				})
+			goodDetail(item) {
+				this.$tui.navigateTo("productDetail/productDetail?good_id=" + item.good_id);
 			},
 			search() {
 				this.$tui.navigateTo("search/search");

@@ -57,7 +57,7 @@
 								</view>
 								<view class="tab-list-price-market">
 									<text class="tab-list-price-symbol">￥</text>
-									{{goodItem.market_price || '0.00'}}
+									{{goodItem.cost_price || '0.00'}}
 								</view>
 							</view>
 							<view class="tab-list-scale tui-skeleton-circular tui-skeleton-good-circular" @tap.stop="cartAdd(goodIndex, goodItem)">

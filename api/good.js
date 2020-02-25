@@ -17,3 +17,12 @@ export function goodList(params) {
         params: params
     });
 }
+
+// 商品详情
+export function goodDetail(params) {
+    return request({
+        url: "/api/good/good/detail",
+        method: "get",
+        params: params
+    });
+}

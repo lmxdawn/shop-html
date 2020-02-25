@@ -11,4 +11,6 @@ export const CURRENT_DATE = "CURRENT_DATE";
 // 引导
 export const GUIDE = "GUIDE";
 // 广告跳转到 tabBar 的参数
-export const AD_PARAMS = "GUIDE";
+export const AD_PARAMS = "AD_PARAMS";
+// 下单时选择的商品
+export const SUBMIT_ORDER_GOOD = "SUBMIT_ORDER_GOOD";

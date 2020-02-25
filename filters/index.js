@@ -66,3 +66,12 @@ export function formatDate(date_str, fmt) {
             );
     return fmt;
 }
+
+/**
+ * 格式化昵称
+ * @returns {void | string | *}
+ * @param name
+ */
+export function formatName(name) {
+    return name.substr(1, 1) + "***" + name.substr(name.length - 1, 1);
+}

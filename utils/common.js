@@ -58,6 +58,23 @@ export function toast(msg, duration, success){
         duration: duration || 2000
     })
 }
+
+/**
+ * 显示加载
+ */
+export function showLoading(title){
+    uni.showLoading({
+        title: title || '加载中'
+    });
+}
+
+/**
+ * 隐藏加载
+ */
+export function hideLoading(){
+    uni.hideLoading();
+}
+
 /**
  * 将对象转为url参数
  * @param data

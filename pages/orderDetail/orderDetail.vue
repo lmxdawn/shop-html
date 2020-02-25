@@ -13,15 +13,6 @@
 				<image :src="getImg(status)" class="tui-status-img" mode="widthFix"></image>
 			</view>
 		</view>
-		<tui-list-cell :arrow="true" bgcolor="#fefefe">
-			<view class="tui-flex-box">
-				<image :src="webURL+'img_order_logistics3x.png'" class="tui-icon-img"></image>
-				<view class="tui-logistics">
-					<view class="tui-logistics-text">快递已到收货点，请注意查收哦! 投递员: XXX 联系电话: 17788849992</view>
-					<view class="tui-logistics-time">2019-06-03 12:02</view>
-				</view>
-			</view>
-		</tui-list-cell>
 		<tui-list-cell :last="true" :hover="false">
 			<view class="tui-flex-box">
 				<image :src="webURL+'img_order_address3x.png'" class="tui-icon-img"></image>
@@ -58,22 +49,6 @@
 					<view>商品总额</view>
 					<view>￥1192.00</view>
 				</view>
-				<view class="tui-price-flex  tui-size24">
-					<view>优惠券</view>
-					<view>￥0.00</view>
-				</view>
-				<view class="tui-price-flex  tui-size24">
-					<view>配送费</view>
-					<view>￥0.00</view>
-				</view>
-				<view class="tui-price-flex tui-size32 tui-pbtm20">
-					<view class="tui-flex-shrink">合计</view>
-					<view class="tui-goods-price">
-						<view class="tui-size-24">￥</view>
-						<view class="tui-price-large">1192</view>
-						<view class="tui-size-24">.00</view>
-					</view>
-				</view>
 				<view class="tui-price-flex tui-size32">
 					<view class="tui-flex-shrink">实付款</view>
 					<view class="tui-goods-price tui-primary-color">
@@ -97,24 +72,12 @@
 					<view class="tui-item-content">48690010100035</view>
 				</view>
 				<view class="tui-order-flex">
-					<view class="tui-item-title">物流单号:</view>
-					<view class="tui-item-content">33655511251265578556</view>
-				</view>
-				<view class="tui-order-flex">
 					<view class="tui-item-title">创建时间:</view>
 					<view class="tui-item-content">2019-05-26 10:36</view>
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">付款时间:</view>
 					<view class="tui-item-content">2019-05-26 10:44</view>
-				</view>
-				<view class="tui-order-flex">
-					<view class="tui-item-title">发货时间:</view>
-					<view class="tui-item-content">2019-05-27 10:20</view>
-				</view>
-				<view class="tui-order-flex">
-					<view class="tui-item-title">配送方式:</view>
-					<view class="tui-item-content">包邮</view>
 				</view>
 				<view class="tui-order-flex">
 					<view class="tui-item-title">订单备注:</view>
@@ -479,7 +442,7 @@
 		padding-bottom: env(safe-area-inset-bottom);
 		z-index: 999;
 	}
-	
+
 	.tui-btn-mr {
 		margin-right: 30rpx;
 	}

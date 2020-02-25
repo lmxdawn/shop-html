@@ -13,7 +13,7 @@
 						</view>
 					</view>
 					<view class="tui-none-addr" v-else>
-						<image src="/static/images/index/map.png" class="tui-addr-img" mode="widthFix"></image>
+						<image src="/static/images/map.png" class="tui-addr-img" mode="widthFix"></image>
 						<text>选择收货地址</text>
 					</view>
 				</view>
@@ -25,69 +25,48 @@
 						商品信息
 					</view>
 				</tui-list-cell>
-				<block v-for="(item,index) in 2" :key="index">
-					<tui-list-cell :hover="false" padding="0">
-						<view class="tui-goods-item">
-							<image :src="`/static/images/mall/product/${index+3}.jpg`" class="tui-goods-img"></image>
-							<view class="tui-goods-center">
-								<view class="tui-goods-name">欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）</view>
-								<view class="tui-goods-attr">黑色，50ml</view>
-							</view>
-							<view class="tui-price-right">
-								<view>￥298.00</view>
-								<view>x2</view>
+				<tui-list-cell :hover="false" padding="0" v-for="(item,index) in submitOrderGood" :key="index">
+					<view class="tui-goods-item">
+						<image :src="item.original_img" class="tui-goods-img"></image>
+						<view class="tui-goods-center">
+							<view class="tui-goods-name">{{item.good_name}}</view>
+							<view class="tui-goods-attr">
+								<tui-tag class="tui-goods-attr-tag" v-if="item.is_hot === 1" size="small" :plain="true" type="red" shape="circle">热卖</tui-tag>
+								<tui-tag class="tui-goods-attr-tag" v-if="item.is_new === 1" size="small" :plain="true" type="high-green" shape="circle">新品</tui-tag>
+								<tui-tag class="tui-goods-attr-tag" v-if="item.is_recommend === 1" size="small" :plain="true" type="warning" shape="circle">推荐</tui-tag>
 							</view>
 						</view>
-					</tui-list-cell>
-				</block>
+						<view class="tui-price-right">
+							<view>￥{{item.money}}</view>
+							<view>x{{item.count}}</view>
+						</view>
+					</view>
+				</tui-list-cell>
+			</view>
+			<view class="tui-top">
 				<tui-list-cell :hover="false">
 					<view class="tui-padding tui-flex">
 						<view>商品总额</view>
-						<view>￥1192.00</view>
+						<view>￥{{sum_money}}</view>
 					</view>
 				</tui-list-cell>
-				<tui-list-cell :arrow="hasCoupon" :hover="hasCoupon" >
-					<view class="tui-padding tui-flex">
-						<view>优惠券</view>
-						<view :class="{'tui-color-red':hasCoupon}">{{hasCoupon?"满5减1":'没有可用优惠券'}}</view>
-					</view>
-				</tui-list-cell>
-				<tui-list-cell :hover="true" :arrow="true">
-					<view class="tui-padding tui-flex">
-						<view>发票</view>
-						<view class="tui-invoice-text">不开发票</view>
-					</view>
-				</tui-list-cell>
-				<tui-list-cell :hover="false">
-					<view class="tui-padding tui-flex">
-						<view>配送费</view>
-						<view>￥0.00</view>
-					</view>
-				</tui-list-cell>
+			</view>
+			<view class="tui-top">
 				<tui-list-cell :hover="false" :lineLeft="false" padding="0">
 					<view class="tui-remark-box tui-padding tui-flex">
 						<view>订单备注</view>
 						<input type="text" class="tui-remark" placeholder="选填: 请先和商家协商一致" placeholder-class="tui-phcolor"></input>
 					</view>
 				</tui-list-cell>
+			</view>
+			<view class="tui-top">
 				<tui-list-cell :hover="false" :last="true">
 					<view class="tui-padding tui-flex tui-total-flex">
 						<view class="tui-flex-end tui-color-red">
 							<view class="tui-black">合计： </view>
 							<view class="tui-size-26">￥</view>
-							<view class="tui-price-large">1192</view>
-							<view class="tui-size-26">.00</view>
+							<view class="tui-price-large">{{sum_money}}</view>
 						</view>
-					</view>
-				</tui-list-cell>
-			</view>
-
-			<view class="tui-top">
-				<tui-list-cell :last="true" :hover="insufficient" :radius="true" :arrow="insufficient">
-					<view class="tui-flex">
-						<view class="tui-balance">余额支付<text class="tui-gray">(￥2019.00)</text></view>
-						<switch color="#30CC67" class="tui-scale-small" v-show="!insufficient" />
-						<view class="tui-pr-30 tui-light-dark" v-show="insufficient">余额不足, 去充值</view>
 					</view>
 				</tui-list-cell>
 			</view>
@@ -97,8 +76,7 @@
 			<view class="tui-flex-end tui-color-red tui-pr-20">
 				<view class="tui-black">实付金额: </view>
 				<view class="tui-size-26">￥</view>
-				<view class="tui-price-large">1192</view>
-				<view class="tui-size-26">.00</view>
+				<view class="tui-price-large">{{sum_money}}</view>
 			</view>
 			<view class="tui-pr25">
 				<tui-button width="200rpx" height="70rpx" type="danger" shape="circle" @click="btnPay">确认支付</tui-button>
@@ -109,31 +87,61 @@
 </template>
 
 <script>
-	import tuiButton from "@/components/extend/button/button"
-	import tuiListCell from "@/components/list-cell/list-cell"
-	import tuiBottomPopup from "@/components/bottom-popup/bottom-popup"
+	import tuiButton from "../../components/extend/button/button"
+	import tuiListCell from "../../components/list-cell/list-cell"
+	import tuiBottomPopup from "../../components/bottom-popup/bottom-popup"
+	import tuiTag from "../../components/tag/tag"
+	import { orderSubmitGoodList } from "../../api/order"
 	export default {
 		components: {
 			tuiButton,
 			tuiListCell,
-			tuiBottomPopup
+			tuiBottomPopup,
+			tuiTag
 		},
 		data() {
 			return {
 				hasCoupon: true,
-				insufficient: false
+				insufficient: false,
+				loading: false,
+				sum_money: "0.00",
+				submitOrderGood: [],
+				params: {
+					good_ids: "",
+					counts: ""
+				}
 			}
+		},
+		onLoad(options) {
+			this.params.good_ids = options.good_ids;
+			this.params.counts = options.counts;
+			this.getOrderSubmitGoodList();
+		},
+		onPullDownRefresh() {
+			this.getOrderSubmitGoodList();
 		},
 		methods: {
 			chooseAddr() {
-				uni.navigateTo({
-					url: "../address/address"
-				})
+				this.$tui.navigateTo("address/address");
 			},
 			btnPay() {
-				uni.navigateTo({
-					url: "../success/success"
-				})
+				this.$tui.navigateTo("orderDetail/orderDetail");
+			},
+			getOrderSubmitGoodList() {
+				if (this.loading) {
+					return false;
+				}
+				this.loading = true;
+				orderSubmitGoodList(this.params)
+					.then(res => {
+						this.loading = false;
+						if (res.code > 0) {
+							this.$tui.toast(res.message);
+							return false;
+						}
+						this.submitOrderGood = res.data.good_list || [];
+						this.sum_money = res.data.sum_money || "0.00";
+					});
 			}
 		}
 	}
@@ -221,15 +229,15 @@
 	}
 
 	.tui-goods-img {
-		width: 180rpx;
-		height: 180rpx;
+		width: 160rpx;
+		height: 160rpx;
 		display: block;
 		flex-shrink: 0;
 	}
 
 	.tui-goods-center {
 		flex: 1;
-		padding: 20rpx 8rpx;
+		padding: 20rpx 20rpx;
 		box-sizing: border-box;
 	}
 
@@ -250,12 +258,11 @@
 		color: #888888;
 		line-height: 32rpx;
 		padding-top: 20rpx;
-		word-break: break-all;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
+		display: flex;
+	}
+
+	.tui-goods-attr-tag {
+		margin-right: 20rpx;
 	}
 
 	.tui-price-right {

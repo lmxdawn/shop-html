@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view class="container" :class="{hidden: !detailInfo.good_id}">
 		<!--header-->
 		<view class="tui-header-box" :style="{height:height+'px',background:'rgba(255,255,255,'+opcity+')'}">
 			<view class="tui-header" :style="{paddingTop:top+'px', opacity:opcity}">
@@ -14,188 +14,139 @@
 			</view>
 		</view>
 		<!--header-->
+		<view style="position: fixed;height: 100vh;width: 100%;background-color: #fff;z-index: 899;" v-if="!detailInfo.good_id"></view>
 
-		<!--banner-->
-		<view class="tui-banner-swiper">
-			<swiper :autoplay="true" :interval="5000" :duration="150" :circular="true" :style="{height:scrollH + 'px'}" @change="bannerChange">
-				<block v-for="(item,index) in banner" :key="index">
-					<swiper-item :data-index="index" @tap.stop="previewImage">
-						<image :src="item" class="tui-slide-image" :style="{height:scrollH+'px'}" />
-					</swiper-item>
-				</block>
-			</swiper>
-			<tui-tag type="translucent" shape="circleLeft" size="small">{{bannerIndex+1}}/{{banner.length}}</tui-tag>
+		<tui-skeleton v-if="skeletonShow" backgroundColor="#fafafa" borderRadius="10rpx"></tui-skeleton>
+		<view class="tui-skeleton">
+			<!--banner-->
+			<view class="tui-banner-swiper tui-skeleton-rect">
+				<swiper :autoplay="true" :interval="5000" :duration="150" :circular="true" :style="{height:scrollH + 'px'}" @change="bannerChange">
+					<block v-for="(item,index) in detailInfo.imgs_url" :key="index">
+						<swiper-item :data-index="index" @tap.stop="previewImage">
+							<image :src="item" class="tui-slide-image" :style="{height:scrollH+'px'}" />
+						</swiper-item>
+					</block>
+				</swiper>
+				<tui-tag type="translucent" shape="circleLeft" size="small">{{bannerIndex+1}}/{{detailInfo.imgs_url.length}}</tui-tag>
+			</view>
+			<!--banner-->
+
+			<view class="tui-pro-detail">
+				<view class="tui-product-title tui-border-radius">
+					<view class="tui-pro-pricebox tui-padding">
+						<view class="tui-pro-price tui-skeleton-rect">
+							<view>
+								￥
+								<block v-if="detailInfo.shop_price_list && detailInfo.shop_price_list.length > 0">
+									<text class="tui-price">{{detailInfo.shop_price_list[0]}}</text>.{{detailInfo.shop_price_list[1]}}
+								</block>
+								<block v-else>
+									<text class="tui-price">0</text>.00
+								</block>
+							</view>
+							<view class="good-tag-box">
+								<tui-tag v-if="detailInfo.is_hot === 1" size="small" :plain="true" type="red" shape="circle">热卖</tui-tag>
+								<tui-tag v-if="detailInfo.is_new === 1" size="small" :plain="true" type="high-green" shape="circle">新品</tui-tag>
+								<tui-tag v-if="detailInfo.is_recommend === 1" size="small" :plain="true" type="warning" shape="circle">推荐</tui-tag>
+							</view>
+						</view>
+						<view class="tui-collection tui-size tui-skeleton-circular" @tap="collecting">
+							<view class="tui-icon tui-icon-collection" :class="['tui-icon-'+(collected?'like-fill':'like')]" :style="{color:collected?'#ff201f':'#333',fontSize:'20px'}"></view>
+						</view>
+					</view>
+					<view class="tui-original-price tui-gray tui-skeleton-rect">
+						价格
+						<text class="tui-line-through">￥{{detailInfo.cost_price || "0.00"}}</text>
+					</view>
+					<view class="tui-pro-titbox">
+						<view class="tui-pro-title tui-skeleton-rect">{{detailInfo.good_name || "商品名称"}}</view>
+						<button open-type="share" class="tui-share-btn tui-share-position tui-skeleton-rect">
+							<tui-tag type="gray" tui-tag-class="tui-tag-share tui-size" shape="circleLeft" size="small">
+								<view class="tui-icon tui-icon-partake" style="color:#999;font-size:15px"></view>
+								<!-- <tui-icon name="partake" color="#999" size="15"></tui-icon> -->
+								<text class="tui-share-text tui-gray">分享</text>
+							</tui-tag>
+						</button>
+					</view>
+					<view class="tui-padding">
+						<view class="tui-sale-info tui-size tui-gray">
+							<view class="tui-sale-info-item tui-skeleton-rect">免运费</view>
+							<view class="tui-sale-info-item tui-skeleton-rect">已售{{detailInfo.sales_sum}}{{detailInfo.unit}}</view>
+							<view class="tui-sale-info-item tui-skeleton-rect">剩余{{detailInfo.store_count}}{{detailInfo.unit}}</view>
+						</view>
+					</view>
+				</view>
+
+				<view class="tui-basic-info tui-mtop tui-radius-all">
+					<view class="tui-list-cell" @tap="showPopup">
+						<view class="tui-bold tui-cell-title"><text class="tui-skeleton-rect">送至</text></view>
+						<view class="tui-addr-box">
+							<view class="tui-addr-item tui-skeleton-rect">今日23:59前完成下单，预计6月28日23:30前发货，7月1日24:00前送达</view>
+						</view>
+						<view>
+							<tui-icon name="more-fill" style="flex-shrink: 0;" :size="20" class="tui-right tui-skeleton-rect" color="#666"></tui-icon>
+						</view>
+					</view>
+				</view>
+			</view>
 		</view>
 
-		<!--banner-->
-
-		<view class="tui-pro-detail">
-			<view class="tui-product-title tui-border-radius">
-				<view class="tui-pro-pricebox tui-padding">
-					<view class="tui-pro-price">
-						<view>￥<text class="tui-price">49</text>.00</view>
-						<tui-tag size="small" :plain="true" type="high-green" shape="circle">新品</tui-tag>
-					</view>
-					<view class="tui-collection tui-size" @tap="collecting">
-						<view class="tui-icon tui-icon-collection" :class="['tui-icon-'+(collected?'like-fill':'like')]" :style="{color:collected?'#ff201f':'#333',fontSize:'20px'}"></view>
-						<view class="tui-scale" :class="[collected?'tui-icon-red':'']">收藏</view>
-					</view>
-				</view>
-				<view class="tui-original-price tui-gray">
-					价格
-					<text class="tui-line-through">￥199.00</text>
-				</view>
-				<view class="tui-pro-titbox">
-					<view class="tui-pro-title">谈判官明星同款耳坠韩国气质简约显脸瘦的耳环女百搭个性长款耳钉 个性水滴耳环【A2】</view>
-					<button open-type="share" class="tui-share-btn tui-share-position">
-						<tui-tag type="gray" tui-tag-class="tui-tag-share tui-size" shape="circleLeft" size="small">
-							<view class="tui-icon tui-icon-partake" style="color:#999;font-size:15px"></view>
-							<!-- <tui-icon name="partake" color="#999" size="15"></tui-icon> -->
-							<text class="tui-share-text tui-gray">分享</text>
-						</tui-tag>
-					</button>
-				</view>
-				<view class="tui-padding">
-					<view class="tui-sub-title tui-size tui-gray">此商品将于2019-06-28,10点结束闪购特卖，时尚美饰联合专场</view>
-					<view class="tui-sale-info tui-size tui-gray">
-						<view>快递：0.00</view>
-						<view>月销2000</view>
-						<view>浙江杭州</view>
-					</view>
+		<view class="tui-cmt-box tui-mtop tui-radius-all">
+			<view class="tui-list-cell tui-last tui-between">
+				<view class="tui-bold tui-cell-title">评价</view>
+				<view @tap="common">
+					<text class="tui-cmt-all">查看全部</text>
+					<view class="tui-icon tui-icon-more-fill" style="color:#ff201f; font-size: 20px;"></view>
+					<!-- <tui-icon name="more-fill" size="20" color="#ff201f"></tui-icon> -->
 				</view>
 			</view>
 
-			<view class="tui-discount-box tui-radius-all tui-mtop">
-				<view class="tui-list-cell" @tap="coupon">
-					<view class="tui-bold tui-cell-title">领券</view>
-					<view class="tui-tag-coupon-box">
-						<tui-tag size="small" type="red" shape="circle" tui-tag-class="tui-tag-coupon">满99减8</tui-tag>
-						<tui-tag size="small" type="red" shape="circle" tui-tag-class="tui-tag-coupon">满59减5</tui-tag>
-					</view>
-					<tui-icon name="more-fill" :size="20" class="tui-right tui-top40" color="#666"></tui-icon>
-				</view>
-
-				<view class="tui-list-cell tui-last" @tap="showPopup">
-					<view class="tui-bold tui-cell-title">促销</view>
-					<view>
-						<view class="tui-promotion-box">
-							<tui-tag size="small" type="red" :plain="true" tui-tag-class="tui-inline-block">多买优惠</tui-tag>
-							<text>满1件，立减最低1件商品价格，包邮（限中国内地）</text>
-						</view>
-						<view class="tui-promotion-box">
-							<tui-tag size="small" type="red" :plain="true" tui-tag-class="tui-inline-block">满额返券</tui-tag>
-							<text>满2件，立减最低2件商品价格，包邮（限中国内地）</text>
-						</view>
-						<view class="tui-promotion-box">
-							<tui-tag size="small" type="red" :plain="true" tui-tag-class="tui-inline-block">特别赠品</tui-tag>
-							<text>满3件，立减最低3件商品价格，包邮（限中国内地）</text>
-						</view>
-					</view>
-					<tui-icon name="more-fill" :size="20" class="tui-right tui-top40" color="#666"></tui-icon>
-				</view>
-
-			</view>
-
-			<view class="tui-basic-info tui-mtop tui-radius-all">
-				<view class="tui-list-cell" @tap="showPopup">
-					<view class="tui-bold tui-cell-title">已选</view>
-					<view class="tui-selected-box">个性水滴耳环【A2】,1个，可选服务</view>
-					<tui-icon name="more-fill" :size="20" class="tui-right" color="#666"></tui-icon>
-				</view>
-				<view class="tui-list-cell" @tap="showPopup">
-					<view class="tui-bold tui-cell-title">送至</view>
-					<view class="tui-addr-box">
-						<view class="tui-addr-item">北京朝阳区三环到四环之间</view>
-						<view class="tui-addr-item">今日23:59前完成下单，预计6月28日23:30前发货，7月1日24:00前送达</view>
-					</view>
-					<tui-icon name="more-fill" :size="20" class="tui-right" color="#666"></tui-icon>
-				</view>
-				<view class="tui-list-cell tui-last">
-					<view class="tui-bold tui-cell-title">运费</view>
-					<view class="tui-selected-box">在线支付免运费</view>
-				</view>
-				<view class="tui-guarantee">
-					<view class="tui-guarantee-item">
-						<tui-icon name="circle-selected" :size="14" color="#999"></tui-icon>
-						<text class="tui-pl">可配送海外</text>
-					</view>
-					<view class="tui-guarantee-item">
-						<tui-icon name="circle-selected" :size="14" color="#999"></tui-icon>
-						<text class="tui-pl">店铺发货&售后</text>
-					</view>
-					<view class="tui-guarantee-item">
-						<tui-icon name="circle-selected" :size="14" color="#999"></tui-icon>
-						<text class="tui-pl">7天无理由退货</text>
-					</view>
-					<view class="tui-guarantee-item">
-						<tui-icon name="circle-selected" :size="14" color="#999"></tui-icon>
-						<text class="tui-pl">闪电退款</text>
-					</view>
-					<view class="tui-guarantee-item">
-						<tui-icon name="circle-selected" :size="14" color="#999"></tui-icon>
-						<text class="tui-pl">极速审核</text>
-					</view>
-				</view>
-			</view>
-
-			<view class="tui-cmt-box tui-mtop tui-radius-all">
-				<view class="tui-list-cell tui-last tui-between">
-					<view class="tui-bold tui-cell-title">评价</view>
-					<view @tap="common">
-						<text class="tui-cmt-all">查看全部</text>
-						<view class="tui-icon tui-icon-more-fill" style="color:#ff201f; font-size: 20px;"></view>
-						<!-- <tui-icon name="more-fill" size="20" color="#ff201f"></tui-icon> -->
-					</view>
-				</view>
-
-				<view class="tui-cmt-content tui-padding">
-					<view class="tui-cmt-user">
-						<image src="../../../static/images/news/avatar_2.jpg" class="tui-acatar"></image>
-						<view>z***9</view>
-					</view>
-					<view class="tui-cmt">物流很快，很适合我的风格❤</view>
-					<view class="tui-attr">颜色：叠层钛钢流苏耳环（A74）</view>
-				</view>
-
-				<view class="tui-cmt-btn">
-					<tui-tag type="black" :plain="true" tui-tag-class="tui-tag-cmt" @tap="common">查看全部评价</tui-tag>
-				</view>
-			</view>
-
-			<view class="tui-nomore-box">
-				<tui-nomore text="宝贝详情" :visible="true" bgcolor="#f7f7f7"></tui-nomore>
-			</view>
-			<view class="tui-product-img tui-radius-all">
-				<image :src="'https://www.thorui.cn/img/detail/'+(index+1)+'.jpg'" v-for="(img,index) in 20" :key="index" mode="widthFix"></image>
-			</view>
-			<tui-nomore text="已经到最底了" :visible="true" bgcolor="#f7f7f7"></tui-nomore>
-			<view class="tui-safearea-bottom"></view>
 		</view>
+
+		<scroll-view v-if="detailInfo.good_comment && detailInfo.good_comment.length > 0" scroll-x scroll-with-animation class="tui-cmt-list-box">
+			<view class="tui-cmt-list-item" v-for="item in detailInfo.good_comment" :key="item.id">
+				<view class="tui-cmt-list-item-user">
+					<view class="tui-cmt-list-item-head">
+						<image class="tui-cmt-list-item-avatar" :src="item.member.avatar"></image>
+						<view class="tui-cmt-list-item-title">
+							<view class="tui-cmt-list-item-name">{{item.member.name | formatName}}</view>
+							<view class="tui-cmt-list-item-date">{{item.create_time | formatDate}}</view>
+						</view>
+					</view>
+					<view class="tui-cmt-list-item-rate-box">
+						<tui-rate :current="item.rate" :quantity="item.rate" normal="#ccc" active="#ff7900"></tui-rate>
+						<view class="tui-cmt-list-item-rate">{{item.rate_name}}</view>
+					</view>
+				</view>
+				<view class="tui-cmt-list-item-content">{{item.content}}</view>
+			</view>
+		</scroll-view>
+
+		<view class="tui-nomore-box">
+			<tui-nomore text="宝贝详情" :visible="true" bgcolor="#f7f7f7"></tui-nomore>
+		</view>
+		<view class="tui-product-img tui-radius-all">
+			<rich-text :nodes="detailInfo.details"></rich-text>
+		</view>
+		<tui-nomore text="已经到最底了" :visible="true" bgcolor="#f7f7f7"></tui-nomore>
+		<view class="tui-safearea-bottom"></view>
 
 		<!--底部操作栏-->
 		<view class="tui-operation">
 			<view class="tui-operation-left tui-col-5">
-				<view class="tui-operation-item" hover-class="opcity" :hover-stay-time="150">
+				<view class="tui-operation-item" style="padding-left: 18rpx;" hover-class="opcity" :hover-stay-time="150">
 					<tui-icon name="kefu" :size="22" color='#333'></tui-icon>
 					<view class="tui-operation-text tui-scale-small">客服</view>
 				</view>
-				<view class="tui-operation-item" hover-class="opcity" :hover-stay-time="150">
-					<tui-icon name="shop" :size="22" color='#333'></tui-icon>
-					<view class="tui-operation-text tui-scale-small">店铺</view>
-				</view>
-				<view class="tui-operation-item" hover-class="opcity" :hover-stay-time="150">
+				<view class="tui-operation-item" style="padding-right: 18rpx;" hover-class="opcity" :hover-stay-time="150">
 					<tui-icon name="cart" :size="22" color='#333'></tui-icon>
 					<view class="tui-operation-text tui-scale-small">购物车</view>
 					<tui-badge type="danger" size="small">9</tui-badge>
 				</view>
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
-				<view class="tui-flex-1">
-					<tui-button type="danger" shape="circle" size="mini" @click="showPopup">加入购物车</tui-button>
-				</view>
-				<view class="tui-flex-1">
-					<tui-button type="warning" shape="circle" size="mini" @click="submit">立即购买</tui-button>
-				</view>
+				<tui-button type="danger" shape="rightAngle" @click="showPopup">加入购物车</tui-button>
+				<tui-button type="warning" shape="rightAngle" @click="submit">立即购买</tui-button>
 			</view>
 		</view>
 
@@ -227,108 +178,22 @@
 		</tui-top-dropdown>
 		<!---顶部下拉菜单-->
 
-		<!--底部选择层-->
-		<tui-bottom-popup :show="popupShow" @close="hidePopup">
-			<view class="tui-popup-box">
-				<view class="tui-product-box tui-padding">
-					<image src="https://www.thorui.cn/img/product/11.jpg" class="tui-popup-img"></image>
-					<view class="tui-popup-price">
-						<view class="tui-amount tui-bold">￥49.00</view>
-						<view class="tui-number">编号:4373299399393</view>
-					</view>
-				</view>
-				<scroll-view scroll-y class="tui-popup-scroll">
-					<view class="tui-scrollview-box">
-						<view class="tui-bold tui-attr-title">颜色</view>
-						<view class="tui-attr-box">
-							<view class="tui-attr-item">
-								五角星钻耳线
-							</view>
-							<view class="tui-attr-item">
-								米子珍珠耳线
-							</view>
-							<view class="tui-attr-item">
-								花朵镶钻耳线
-							</view>
-							<view class="tui-attr-item">
-								扇子珍珠流苏耳线
-							</view>
-							<view class="tui-attr-item tui-attr-active">
-								扇子珍珠流苏耳线耳线
-							</view>
-						</view>
-
-						<view class="tui-number-box tui-bold tui-attr-title">
-							<view class="tui-attr-title">数量</view>
-							<tui-numberbox :max="99" :min="1" :value="value" @change="change"></tui-numberbox>
-						</view>
-						<view class="tui-bold tui-attr-title">尺寸</view>
-						<view class="tui-attr-box">
-							<view class="tui-attr-item">
-								5cm
-							</view>
-							<view class="tui-attr-item">
-								8cm
-							</view>
-							<view class="tui-attr-item">
-								12cm
-							</view>
-							<view class="tui-attr-item">
-								16cm
-							</view>
-							<view class="tui-attr-item tui-attr-active">
-								18cm
-							</view>
-						</view>
-
-						<view class="tui-bold tui-attr-title">
-							保障服务
-						</view>
-						<view class="tui-attr-box">
-							<view class="tui-attr-item">
-								半年掉钻保 ￥4.0
-							</view>
-						</view>
-
-						<view class="tui-bold tui-attr-title">
-							只换不修
-						</view>
-						<view class="tui-attr-box">
-							<view class="tui-attr-item">
-								三月意外换￥2.0
-							</view>
-							<view class="tui-attr-item">
-								半年意外换￥2.0
-							</view>
-						</view>
-					</view>
-				</scroll-view>
-				<view class="tui-operation tui-operation-right tui-right-flex tui-popup-btn">
-					<view class="tui-flex-1">
-						<tui-button type="red" shape="circle" size="mini" @click="hidePopup">加入购物车</tui-button>
-					</view>
-					<view class="tui-flex-1">
-						<tui-button type="warning" shape="circle" size="mini" @click="submit">立即购买</tui-button>
-					</view>
-				</view>
-				<view class="tui-icon tui-icon-close-fill tui-icon-close" style="color: #999;font-size:20px" @tap="hidePopup"></view>
-				<!-- <tui-icon name="close-fill" color="#999" class="tui-icon-close" size="20" @tap="hidePopup"></tui-icon> -->
-			</view>
-		</tui-bottom-popup>
-		<!--底部选择层-->
-
 	</view>
 </template>
 
 <script>
-	import tuiIcon from "@/components/icon/icon"
-	import tuiTag from "@/components/tag/tag"
-	import tuiBadge from "@/components/badge/badge"
-	import tuiNomore from "@/components/nomore/nomore"
-	import tuiButton from "@/components/button/button"
-	import tuiTopDropdown from "@/components/top-dropdown/top-dropdown"
-	import tuiBottomPopup from "@/components/bottom-popup/bottom-popup"
-	import tuiNumberbox from "@/components/numberbox/numberbox"
+	import tuiIcon from "../../components/icon/icon"
+	import tuiTag from "../../components/tag/tag"
+	import tuiBadge from "../../components/badge/badge"
+	import tuiNomore from "../../components/nomore/nomore"
+	import tuiButton from "../../components/button/button"
+	import tuiTopDropdown from "../../components/top-dropdown/top-dropdown"
+	import tuiBottomPopup from "../../components/bottom-popup/bottom-popup"
+	import tuiNumberbox from "../../components/numberbox/numberbox"
+	import tuiRate from "../../components/rate/rate"
+	import tuiSkeleton from "../../components/tui-skeleton/tui-skeleton"
+	import { goodDetail } from "../../api/good"
+	import { orderSubmitGoodList } from "../../api/order"
 	export default {
 		components: {
 			tuiIcon,
@@ -338,7 +203,9 @@
 			tuiButton,
 			tuiTopDropdown,
 			tuiBottomPopup,
-			tuiNumberbox
+			tuiNumberbox,
+			tuiRate,
+			tuiSkeleton
 		},
 		data() {
 			return {
@@ -358,46 +225,63 @@
 					"https://www.thorui.cn/img/product/8.jpg"
 				],
 				bannerIndex: 0,
-				topMenu: [{
-					icon: "message",
-					text: "消息",
-					size: 26,
-					badge: 3
-				}, {
-					icon: "home",
-					text: "首页",
-					size: 23,
-					badge: 0
-				}, {
-					icon: "people",
-					text: "我的",
-					size: 26,
-					badge: 0
-				}, {
-					icon: "cart",
-					text: "购物车",
-					size: 23,
-					badge: 2
-				}, {
-					icon: "kefu",
-					text: "客服小蜜",
-					size: 26,
-					badge: 0
-				}, {
-					icon: "feedback",
-					text: "我要反馈",
-					size: 23,
-					badge: 0
-				}, {
-					icon: "share",
-					text: "分享",
-					size: 26,
-					badge: 0
-				}],
+				topMenu: [
+					{
+						icon: "message",
+						text: "消息",
+						size: 26,
+						badge: 3
+					},
+					{
+						icon: "home",
+						text: "首页",
+						size: 23,
+						badge: 0
+					},
+					{
+						icon: "people",
+						text: "我的",
+						size: 26,
+						badge: 0
+					},
+					{
+						icon: "cart",
+						text: "购物车",
+						size: 23,
+						badge: 2
+					},
+					{
+						icon: "kefu",
+						text: "客服小蜜",
+						size: 26,
+						badge: 0
+					},
+					{
+						icon: "feedback",
+						text: "我要反馈",
+						size: 23,
+						badge: 0
+					},
+					{
+						icon: "share",
+						text: "分享",
+						size: 26,
+						badge: 0
+					}
+				],
 				menuShow: false,
 				popupShow: false,
 				value: 1,
-				collected: false
+				collected: false,
+				skeletonShow: false,
+				detailInfo: {
+					details: "",
+					good_comment: [],
+					imgs_url: [""],
+				},
+				params: {
+					good_id: ""
+				},
 			}
 		},
 		onLoad: function(options) {
@@ -418,12 +302,18 @@
 						this.width = obj.left || res.windowWidth;
 						this.height = obj.top ? (obj.top + obj.height + 8) : (res.statusBarHeight + 44);
 						this.top = obj.top ? (obj.top + (obj.height - 32) / 2) : (res.statusBarHeight + 6);
-						this.scrollH = res.windowWidth
+						this.scrollH = res.windowWidth;
+						this.params.good_id = options.good_id;
+						this.init();
 					}
 				})
 			}, 50)
 		},
 		methods: {
+			init() {
+				this.skeletonShow = true;
+				this.getGoodDetail();
+			},
 			bannerChange: function(e) {
 				this.bannerIndex = e.detail.current
 			},
@@ -456,18 +346,38 @@
 				this.collected = !this.collected
 			},
 			common: function() {
-				this.tui.toast("功能开发中~")
+				this.$tui.toast("功能开发中~")
 			},
-			submit(){
-				this.popupShow = false
-				uni.navigateTo({
-					url: '../mall-extend/submitOrder/submitOrder'
-				})
+			submit() {
+				if (!this.detailInfo.good_id) {
+					return false;
+				}
+				const data = {
+					good_ids: this.detailInfo.good_id,
+					counts: 1
+				};
+				orderSubmitGoodList(data)
+					.then(res => {
+						this.loading = false;
+						if (res.code > 0) {
+							this.$tui.toast(res.message);
+							return false;
+						}
+						this.$tui.navigateTo(`submitOrder/submitOrder?good_ids=${this.detailInfo.good_id}&counts=1`);
+					});
 			},
-			coupon(){
-				uni.navigateTo({
-					url: '../mall-extend/coupon/coupon'
-				})
+			getGoodDetail() {
+				goodDetail(this.params)
+					.then(res => {
+						if (res.code) {
+							return false;
+						}
+						this.skeletonShow = false;
+						this.detailInfo = res.data || {};
+						let details = this.detailInfo.details;
+						this.detailInfo.details = details.replace(/\<img/gi, '<img style="max-width:100%;height:auto" ');
+						this.detailInfo.shop_price_list = this.detailInfo.shop_price.split(".");
+					})
 			}
 		},
 		onPageScroll(e) {
@@ -489,7 +399,10 @@
 	page {
 		background: #f7f7f7;
 	}
-
+	.hidden {
+		height: 100vh;
+		overflow: hidden;
+	}
 	.container {
 		padding-bottom: 110rpx;
 	}
@@ -499,7 +412,7 @@
 		position: fixed;
 		left: 0;
 		top: 0;
-		z-index: 9998;
+		z-index: 880;
 	}
 
 	.tui-header {
@@ -557,6 +470,7 @@
 
 	.tui-banner-swiper {
 		position: relative;
+		min-height: 750rpx;
 	}
 
 	.tui-banner-swiper .tui-tag-class {
@@ -649,6 +563,12 @@
 	/*顶部菜单*/
 
 	/*内容 部分*/
+	.good-tag-box {
+		padding-left: 5px;
+	}
+	.good-tag-box .tui-tag-class{
+		display: inline-block;
+	}
 
 	.tui-padding {
 		padding: 0 30rpx;
@@ -676,13 +596,10 @@
 	}
 
 	.tui-border-radius {
-		border-bottom-left-radius: 24rpx;
-		border-bottom-right-radius: 24rpx;
 		overflow: hidden;
 	}
 
 	.tui-radius-all {
-		border-radius: 24rpx;
 		overflow: hidden;
 	}
 
@@ -729,7 +646,7 @@
 	.tui-original-price {
 		font-size: 26rpx;
 		line-height: 26rpx;
-		padding: 10rpx 30rpx;
+		margin: 10rpx 30rpx;
 		box-sizing: border-box;
 	}
 
@@ -768,7 +685,8 @@
 	}
 
 	.tui-pro-title {
-		padding-top: 20rpx;
+		margin-top: 20rpx;
+		font-size: 35rpx;
 	}
 
 	.tui-share-btn {
@@ -787,7 +705,7 @@
 	.tui-share-position {
 		position: absolute;
 		right: 0;
-		top: 30rpx;
+		top: 0;
 	}
 
 	.tui-share-text {
@@ -802,7 +720,11 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		padding-top: 30rpx;
+		padding-top: 35rpx;
+	}
+
+	.tui-sale-info-item {
+		min-width: 100rpx;
 	}
 
 	.tui-discount-box {
@@ -813,16 +735,12 @@
 		position: relative;
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		font-size: 26rpx;
-		line-height: 26rpx;
-		padding: 36rpx 30rpx;
+		height: 100rpx;
+		line-height: 100rpx;
+		padding: 0 30rpx;
 		box-sizing: border-box;
-	}
-
-	.tui-right {
-		position: absolute;
-		right: 30rpx;
-		top: 30rpx;
 	}
 
 	.tui-top40 {
@@ -859,9 +777,13 @@
 
 
 	.tui-cell-title {
-		width: 66rpx;
-		padding-right: 30rpx;
 		flex-shrink: 0;
+	}
+
+	.tui-selected-box {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 
 	.tui-promotion-box {
@@ -890,10 +812,11 @@
 
 	.tui-addr-box {
 		width: 76%;
+		padding-top: 26rpx;
+		padding-bottom: 26rpx;
 	}
 
 	.tui-addr-item {
-		padding: 10rpx;
 		line-height: 34rpx;
 	}
 
@@ -986,11 +909,11 @@
 	/*底部操作栏*/
 
 	.tui-col-7 {
-		width: 58.33333333%;
+		width: 66.66666667%;
 	}
 
 	.tui-col-5 {
-		width: 41.66666667%;
+		width: 33.33333333%;
 	}
 
 	.tui-operation {
@@ -1027,6 +950,7 @@
 	.tui-operation-left {
 		display: flex;
 		align-items: center;
+		height: 100%;
 	}
 
 	.tui-operation-item {
@@ -1036,6 +960,7 @@
 		justify-content: center;
 		flex-direction: column;
 		position: relative;
+		height: 100%;
 	}
 
 	.tui-operation-text {
@@ -1072,7 +997,7 @@
 
 	.tui-operation .tui-badge-class {
 		position: absolute;
-		top: -6rpx;
+		top: 0;
 		/* #ifdef H5 */
 		transform: translateX(50%)
 			/* #endif  */
@@ -1211,4 +1136,73 @@
 	}
 
 	/*底部选择弹层*/
+
+	.tui-cmt-list-box {
+		background-color: #fff;
+		padding: 0 30rpx 50rpx 0;
+		width: 100%;
+		box-sizing: border-box;
+		white-space: nowrap;
+	}
+
+	.tui-cmt-list-item {
+		display: inline-block;
+		border-radius: 15rpx;
+		background-color: #fbfbfb;
+		box-sizing: border-box;
+		padding: 40rpx;
+		margin-left: 30rpx;
+		width: 600rpx;
+	}
+
+	.tui-cmt-list-item-user {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	.tui-cmt-list-item-head {
+		display: flex;
+	}
+
+	.tui-cmt-list-item-avatar {
+		width: 90rpx;
+		height: 90rpx;
+		flex-shrink: 0;
+		border-radius: 50%;
+	}
+
+	.tui-cmt-list-item-title {
+		margin-left: 20rpx;
+		font-size: 40rpx;
+	}
+
+	.tui-cmt-list-item-name {
+		width: 200rpx;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.tui-cmt-list-item-date {
+		color: #999999;
+		font-size: 24rpx;
+	}
+
+	.tui-cmt-list-item-rate-box {
+		text-align: right;
+		color: #999999;
+	}
+
+	.tui-cmt-list-item-rate {
+		font-size: 30rpx;
+	}
+
+	.tui-cmt-list-item-content {
+		color: #666666;
+		margin-top: 40rpx;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
 </style>
