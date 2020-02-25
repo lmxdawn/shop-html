@@ -89,6 +89,7 @@
 		},
 		data() {
 			return {
+				isLoad: false,
 				tabBar: [{},{},{},{},{},{},{},{},{},{},{}],
 				tabBarMap: {},
 				topTabBar: [{},{},{},{},{}],
@@ -114,6 +115,7 @@
 			}
 		},
 		onLoad: function(options) {
+			this.isLoad = true;
 			setTimeout(() => {
 				uni.getSystemInfo({
 					success: (res) => {
@@ -127,7 +129,22 @@
 			}, 50);
 		},
 		onShow() {
-			this.init();
+			if (!this.isLoad) {
+				this.init();
+			} else if (this.adParams.category_id) {
+				if (this.adParams.category_id != this.category_id) {
+					const topTabBar = this.tabBarMap[this.adParams.category_id] || [];
+					this.category_id = this.adParams.category_id;
+					if (topTabBar.length === 0) {
+						this.isTopTabBar = false;
+					} else {
+						this.isTopTabBar = true;
+					}
+					this.currentTopTab = 0;
+					this.getGoodCategoryList();
+				}
+				this.$store.dispatch("setAdParams", {key: "category_id", value: ""});
+			}
 		},
 		onPullDownRefresh() {
 			// 清空之前的
@@ -141,6 +158,7 @@
 		},
 		methods: {
 			init() {
+				this.isTopTabBar = true;
 				this.skeletonShow = true;
 				this.goodSkeletonShow = true;
 				if (this.adParams.category_id) {
@@ -157,9 +175,10 @@
 				this.currentTab = index;
 				this.currentTopTab = 0;
 				this.checkCor();
-				const topTabBar = this.tabBarMap[index] || [];
+				const topTabBar = this.tabBarMap[item.id] || [];
 				if (topTabBar.length === 0) {
 					this.params.category_id = item.id;
+					this.category_id = item.id;
 					this.isTopTabBar = false;
 				} else {
 					this.isTopTabBar = true;
@@ -167,6 +186,7 @@
 					for (let item of topTabBar) {
 						if (count === this.currentTopTab) {
 							this.params.category_id = item.id;
+							this.category_id = item.id;
 						}
 						count++;
 					}
@@ -194,6 +214,7 @@
 				this.currentTopTab = index;
 				this.checkTopCor();
 				this.params.category_id = item.id;
+				this.category_id = item.id;
 				this.getSelectGoodList();
 			},
 			//判断当前滚动超过一屏时，设置tab标题滚动条。
@@ -238,7 +259,7 @@
 						let category_id = "";
 						let count = 0;
 						for (let item of list) {
-							this.tabBarMap[count] = [];
+							this.tabBarMap[item.id] = [];
 							let cCount = 0;
 							if (item.children) {
 								for (let cItem of item.children) {
@@ -248,7 +269,7 @@
 											if (count === this.currentTab && cCount === 0 && cCCount === this.currentTopTab) {
 												category_id = cCItem.id;
 											}
-											this.tabBarMap[count].push(cCItem);
+											this.tabBarMap[item.id].push(cCItem);
 											cCCount++;
 										}
 									}
@@ -256,7 +277,7 @@
 								}
 							}
 							if (count === this.currentTab) {
-								this.topTabBar = this.tabBarMap[count];
+								this.topTabBar = this.tabBarMap[item.id];
 								if (category_id === "") {
 									category_id = item.id;
 									this.isTopTabBar = false;
@@ -264,6 +285,7 @@
 							}
 							count++;
 						}
+						console.log(this.isTopTabBar);
 						this.params.category_id = category_id;
 						this.tabBar = list;
 						this.getSelectGoodList();
@@ -280,7 +302,9 @@
 				this.params.page = 1;
 				this.isLoadMore = true;
 				this.goodSkeletonShow = true;
-				this.getGoodList();
+				setTimeout(() => {
+					this.getGoodList();
+				}, 100);
 			},
 			getGoodList() {
 				if (this.loading) {
