@@ -9,6 +9,7 @@ const state = {
     guide: getStorageSync(guideKey) || false, // 引导页面
     adParams: {}, // 广告点击的参数
     submitOrderAddress: {}, // 下单时的地址
+    cartCount: 0, // 购物车数量
 };
 
 // getters
@@ -18,6 +19,7 @@ const getters = {
     guide: state => state.guide,
     adParams: state => state.adParams,
     submitOrderAddress: state => state.submitOrderAddress,
+    cartCount: state => state.cartCount,
 };
 
 // actions
@@ -36,6 +38,9 @@ const actions = {
     },
     setSubmitOrderAddress({ commit }, list) {
         commit(types.SUBMIT_ORDER_ADDRESS, list);
+    },
+    setCartCount({ commit }, type) {
+        commit(types.CART_COUNT, type);
     }
 };
 
@@ -61,6 +66,24 @@ const mutations = {
     // 下单时的商品
     [types.SUBMIT_ORDER_ADDRESS](state, item) {
         state.submitOrderAddress = item;
+    },
+    // 购物车
+    [types.CART_COUNT](state, type) {
+        if (type === 1) {
+            state.cartCount++;
+        } else if (type > 1){
+            state.cartCount = type;
+        } else {
+            if (state.cartCount > 0) {
+                state.cartCount--;
+            }
+        }
+        if (state.cartCount > 0) {
+            uni.setTabBarBadge({
+                index: 2,
+                text: state.cartCount + ""
+            })
+        }
     }
 };
 export default {

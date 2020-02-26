@@ -74,6 +74,7 @@
 	import { goodCategoryList } from "../../api/goodCategory";
 	import { goodList } from "../../api/good";
 	import { mapGetters } from "vuex";
+	import {orderCartSave} from "../../api/orderCart";
 	export default {
 		components: {
 			tuiIcon,
@@ -227,7 +228,25 @@
 				}
 			},
 			cartAdd(index, item) {
-				this.goods[index].cart_num++;
+				let isLogin = this.$tui.navigateToLogin();
+				if (!isLogin) {
+					return false;
+				}
+				const data = {
+					good_id: item.good_id,
+					count: 1,
+					type: 1
+				};
+				orderCartSave(data)
+						.then(res => {
+							if (res.code > 0) {
+								this.$tui.toast(res.message);
+								return false;
+							}
+							this.$tui.toast("加入购物车成功");
+							this.$store.dispatch("setCartCount", 1);
+						})
+						.catch(() => {})
 			},
 			goodDetail(item) {
 				this.$tui.navigateTo("productDetail/productDetail?good_id=" + item.good_id);

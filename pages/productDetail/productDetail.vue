@@ -139,7 +139,7 @@
 				<view class="tui-operation-item" style="padding-right: 18rpx;" hover-class="opcity" :hover-stay-time="150" @tap="cartClick">
 					<tui-icon name="cart" :size="22" color='#333'></tui-icon>
 					<view class="tui-operation-text tui-scale-small">购物车</view>
-					<tui-badge type="danger" size="small">9</tui-badge>
+					<tui-badge type="danger" size="small" v-if="cartCount > 0">{{cartCount}}</tui-badge>
 				</view>
 			</view>
 			<view class="tui-operation-right tui-right-flex tui-col-7">
@@ -208,6 +208,7 @@
 	import { goodDetail } from "../../api/good"
 	import { orderSubmitGoodList } from "../../api/order"
 	import { orderCartSave } from "../../api/orderCart";
+	import { mapGetters } from "vuex";
 	export default {
 		components: {
 			tuiIcon,
@@ -220,6 +221,11 @@
 			tuiNumberbox,
 			tuiRate,
 			tuiSkeleton
+		},
+		computed: {
+			...mapGetters({
+				cartCount: "cartCount",
+			})
 		},
 		data() {
 			return {
@@ -318,21 +324,19 @@
 				}
 				const data = {
 					good_id: this.detailInfo.good_id,
-					count: 1
+					count: 1,
+					type: 1
 				};
-				this.$tui.showLoading();
 				orderCartSave(data)
 						.then(res => {
-							this.$tui.hideLoading();
 							if (res.code > 0) {
 								this.$tui.toast(res.message);
 								return false;
 							}
 							this.$tui.toast("加入购物车成功");
+							this.$store.dispatch("setCartCount", 1);
 						})
-						.catch(() => {
-							this.$tui.hideLoading();
-						})
+						.catch(() => {})
 			},
 			commentClick() {
 				this.$tui.navigateTo("comment/comment?good_id=" + this.params.good_id);

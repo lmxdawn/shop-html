@@ -14,3 +14,5 @@ export const GUIDE = "GUIDE";
 export const AD_PARAMS = "AD_PARAMS";
 // 下单时选择的地址
 export const SUBMIT_ORDER_ADDRESS = "SUBMIT_ORDER_ADDRESS";
+// 购物车数量
+export const CART_COUNT = "CART_COUNT";

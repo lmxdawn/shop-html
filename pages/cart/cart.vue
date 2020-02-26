@@ -121,6 +121,7 @@
 	import { goodRecommend } from "../../api/good";
 	import { orderCartList, orderCartSave, orderCartDelete, orderCartCheck } from "../../api/orderCart";
 	import calculation from "../../common/calculation"
+	import {orderSubmitGoodList} from "../../api/order";
 	export default {
 		components: {
 			tuiSwipeAction,
@@ -269,6 +270,7 @@
 										this.$tui.toast("删除成功");
 										for (let item of indexs) {
 											this.dataList.splice(item, 1);
+											this.$store.dispatch("setCartCount", 0);
 										}
 										this.calculation();
 									})
@@ -319,6 +321,7 @@
 										this.$tui.toast("删除成功");
 										this.dataList.splice(index, 1);
 										this.calculation();
+										this.$store.dispatch("setCartCount", 0);
 									})
 									.catch(() => {
 										this.$tui.hideLoading();
@@ -340,6 +343,7 @@
 						item.money = calculation.accMul(item.count, item.shop_price);
 						this.dataList.splice(e.index, 1, item);
 						this.calculation();
+						this.$store.dispatch("setCartCount", 1);
 					})
 					.catch(() => {
 						this.$tui.hideLoading();
@@ -354,15 +358,52 @@
 				this.$tui.navigateTo("productDetail/productDetail?good_id=" + item.good_id);
 			},
 			btnPay() {
-				uni.navigateTo({
-					url: '../submitOrder/submitOrder'
-				})
+				let good_ids= [];
+				let counts = [];
+				let index = 0;
+				for (let item of this.dataList) {
+					if (item.is_check === 1) {
+						good_ids.push(item.good_id);
+						counts.push(item.count);
+					}
+					index++;
+				}
+				if (counts.length === 0 || good_ids.length === 0) {
+					this.$tui.toast("请选择至少一个商品");
+					return false;
+				}
+				let isLogin = this.$tui.navigateToLogin();
+				if (!isLogin) {
+					return false;
+				}
+				let good_ids_str = good_ids.join(",");
+				let counts_str = counts.join(",");
+				const data = {
+					good_ids: good_ids_str,
+					counts: counts_str
+				};
+				console.log(counts_str);
+				orderSubmitGoodList(data)
+						.then(res => {
+							if (res.code > 0) {
+								this.$tui.toast(res.message);
+								return false;
+							}
+							this.$tui.navigateTo(`submitOrder/submitOrder?good_ids=${good_ids_str}&counts=${counts_str}`);
+						});
 			},
 			getOrderCartList() {
 				orderCartList()
 					.then(res => {
 						this.dataList = res.data || [];
 						this.calculation();
+						let cartCount = 0;
+						for (let item of this.dataList) {
+							cartCount += item.count;
+						}
+						if (cartCount > 0) {
+							this.$store.dispatch("setCartCount", cartCount);
+						}
 					})
 			},
 			loadMore() {
