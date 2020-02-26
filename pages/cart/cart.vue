@@ -382,7 +382,6 @@
 					good_ids: good_ids_str,
 					counts: counts_str
 				};
-				console.log(counts_str);
 				orderSubmitGoodList(data)
 						.then(res => {
 							if (res.code > 0) {
@@ -395,7 +394,8 @@
 			getOrderCartList() {
 				orderCartList()
 					.then(res => {
-						this.dataList = res.data || [];
+						let dataList = res.data || [];
+						this.dataList = Array.isArray(dataList) ? dataList : [];
 						this.calculation();
 						let cartCount = 0;
 						for (let item of this.dataList) {
