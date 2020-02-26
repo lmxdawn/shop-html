@@ -10,7 +10,6 @@
 				 @tap="back"></view>
 				<view class="tui-icon tui-icon-more-fill  tui-icon-ml" :style="{color:opcity>=1?'#000':'#fff',background:'rgba(0, 0, 0,'+iconOpcity+')',fontSize:'20px'}"
 				 @tap.stop="openMenu"></view>
-				<tui-badge type="red" size="small">5</tui-badge>
 			</view>
 		</view>
 		<!--header-->
@@ -78,10 +77,10 @@
 				</view>
 
 				<view class="tui-basic-info tui-mtop tui-radius-all">
-					<view class="tui-list-cell" @tap="showPopup">
+					<view class="tui-list-cell">
 						<view class="tui-bold tui-cell-title"><text class="tui-skeleton-rect">送至</text></view>
 						<view class="tui-addr-box">
-							<view class="tui-addr-item tui-skeleton-rect">今日23:59前完成下单，预计6月28日23:30前发货，7月1日24:00前送达</view>
+							<view class="tui-addr-item tui-skeleton-rect">{{detailInfo.address.address}}</view>
 						</view>
 						<view>
 							<tui-icon name="more-fill" style="flex-shrink: 0;" :size="20" class="tui-right tui-skeleton-rect" color="#666"></tui-icon>
@@ -94,13 +93,12 @@
 		<view class="tui-cmt-box tui-mtop tui-radius-all">
 			<view class="tui-list-cell tui-last tui-between">
 				<view class="tui-bold tui-cell-title">评价</view>
-				<view @tap="common">
+				<view @tap="commentClick">
 					<text class="tui-cmt-all">查看全部</text>
 					<view class="tui-icon tui-icon-more-fill" style="color:#ff201f; font-size: 20px;"></view>
 					<!-- <tui-icon name="more-fill" size="20" color="#ff201f"></tui-icon> -->
 				</view>
 			</view>
-
 		</view>
 
 		<scroll-view v-if="detailInfo.good_comment && detailInfo.good_comment.length > 0" scroll-x scroll-with-animation class="tui-cmt-list-box">
@@ -134,19 +132,19 @@
 		<!--底部操作栏-->
 		<view class="tui-operation">
 			<view class="tui-operation-left tui-col-5">
-				<view class="tui-operation-item" style="padding-left: 18rpx;" hover-class="opcity" :hover-stay-time="150">
-					<tui-icon name="kefu" :size="22" color='#333'></tui-icon>
-					<view class="tui-operation-text tui-scale-small">客服</view>
+				<view class="tui-operation-item" style="padding-left: 18rpx;" hover-class="opcity" :hover-stay-time="150" @tap="homeClick">
+					<tui-icon name="home" :size="22" color='#333'></tui-icon>
+					<view class="tui-operation-text tui-scale-small">首页</view>
 				</view>
-				<view class="tui-operation-item" style="padding-right: 18rpx;" hover-class="opcity" :hover-stay-time="150">
+				<view class="tui-operation-item" style="padding-right: 18rpx;" hover-class="opcity" :hover-stay-time="150" @tap="cartClick">
 					<tui-icon name="cart" :size="22" color='#333'></tui-icon>
 					<view class="tui-operation-text tui-scale-small">购物车</view>
 					<tui-badge type="danger" size="small">9</tui-badge>
 				</view>
 			</view>
-			<view class="tui-operation-right tui-right-flex tui-col-7 tui-btnbox-4">
-				<tui-button type="danger" shape="rightAngle" @click="showPopup">加入购物车</tui-button>
-				<tui-button type="warning" shape="rightAngle" @click="submit">立即购买</tui-button>
+			<view class="tui-operation-right tui-right-flex tui-col-7">
+				<tui-button class="tui-operation-right-btn" type="danger" shape="rightAngle" @click="cartAddClick">加入购物车</tui-button>
+				<tui-button class="tui-operation-right-btn" type="warning" shape="rightAngle" @click="submit">立即购买</tui-button>
 			</view>
 		</view>
 
@@ -161,15 +159,30 @@
 					功能直达
 				</view>
 				<view class="tui-menu-itembox">
-					<block v-for="(item,index) in topMenu" :key="index">
-						<view class="tui-menu-item" hover-class="tui-opcity" :hover-stay-time="150" @tap="common">
-							<view class="tui-badge-box">
-								<tui-icon :name="item.icon" color="#fff" :size="item.size"></tui-icon>
-								<tui-badge type="red" tui-badge-class="tui-menu-badge" size="small" v-if="item.badge">{{item.badge}}</tui-badge>
-							</view>
-							<view class="tui-menu-text">{{item.text}}</view>
+					<view class="tui-menu-item" hover-class="tui-opcity" :hover-stay-time="150" @tap="homeClick">
+						<view class="tui-badge-box">
+							<tui-icon name="home" color="#fff" :size="23"></tui-icon>
 						</view>
-					</block>
+						<view class="tui-menu-text">首页</view>
+					</view>
+					<view class="tui-menu-item" hover-class="tui-opcity" :hover-stay-time="150" @tap="peopleClick">
+						<view class="tui-badge-box">
+							<tui-icon name="people" color="#fff" :size="26"></tui-icon>
+						</view>
+						<view class="tui-menu-text">我的</view>
+					</view>
+					<view class="tui-menu-item" hover-class="tui-opcity" :hover-stay-time="150" @tap="cartClick">
+						<view class="tui-badge-box">
+							<tui-icon name="cart" color="#fff" :size="23"></tui-icon>
+						</view>
+						<view class="tui-menu-text">购物车</view>
+					</view>
+					<view class="tui-menu-item" hover-class="tui-opcity" :hover-stay-time="150" @tap="shareClick">
+						<view class="tui-badge-box">
+							<tui-icon name="share" color="#fff" :size="26"></tui-icon>
+						</view>
+						<view class="tui-menu-text">分享</view>
+					</view>
 				</view>
 				<view class="tui-icon tui-icon-up" style="color: #fff; font-size: 26px;" @tap.stop="closeMenu"></view>
 				<!-- <tui-icon name="up" color="#fff" size="26" class="tui-icon-up" @tap.stop="closeMenu"></tui-icon> -->
@@ -214,68 +227,14 @@
 				scrollH: 0, //滚动总高度
 				opcity: 0,
 				iconOpcity: 0.5,
-				banner: [
-					"https://www.thorui.cn/img/product/11.jpg",
-					"https://www.thorui.cn/img/product/2.png",
-					"https://www.thorui.cn/img/product/33.jpg",
-					"https://www.thorui.cn/img/product/4.png",
-					"https://www.thorui.cn/img/product/55.jpg",
-					"https://www.thorui.cn/img/product/6.png",
-					"https://www.thorui.cn/img/product/7.jpg",
-					"https://www.thorui.cn/img/product/8.jpg"
-				],
 				bannerIndex: 0,
-				topMenu: [
-					{
-						icon: "message",
-						text: "消息",
-						size: 26,
-						badge: 3
-					},
-					{
-						icon: "home",
-						text: "首页",
-						size: 23,
-						badge: 0
-					},
-					{
-						icon: "people",
-						text: "我的",
-						size: 26,
-						badge: 0
-					},
-					{
-						icon: "cart",
-						text: "购物车",
-						size: 23,
-						badge: 2
-					},
-					{
-						icon: "kefu",
-						text: "客服小蜜",
-						size: 26,
-						badge: 0
-					},
-					{
-						icon: "feedback",
-						text: "我要反馈",
-						size: 23,
-						badge: 0
-					},
-					{
-						icon: "share",
-						text: "分享",
-						size: 26,
-						badge: 0
-					}
-				],
 				menuShow: false,
-				popupShow: false,
 				value: 1,
 				collected: false,
 				skeletonShow: false,
 				detailInfo: {
 					details: "",
+					address: {},
 					good_comment: [],
 					imgs_url: [""],
 				},
@@ -320,8 +279,8 @@
 			previewImage: function(e) {
 				let index = e.currentTarget.dataset.index;
 				uni.previewImage({
-					current: this.banner[index],
-					urls: this.banner
+					current: this.detailInfo.imgs_url[index],
+					urls: this.detailInfo.imgs_url
 				})
 			},
 			back: function() {
@@ -333,23 +292,39 @@
 			closeMenu: function() {
 				this.menuShow = false
 			},
-			showPopup: function() {
-				this.popupShow = true
-			},
-			hidePopup: function() {
-				this.popupShow = false
-			},
 			change: function(e) {
 				this.value = e.value
 			},
 			collecting: function() {
 				this.collected = !this.collected
 			},
-			common: function() {
-				this.$tui.toast("功能开发中~")
+			homeClick() {
+				this.$tui.switchTab("index/index");
+			},
+			peopleClick() {
+				this.$tui.switchTab("my/my");
+			},
+			cartClick() {
+				this.$tui.switchTab("cart/cart");
+			},
+			shareClick() {
+				this.$tui.toast("分享");
+			},
+			cartAddClick() {
+				let isLogin = this.$tui.navigateToLogin();
+				if (!isLogin) {
+					return false;
+				}
+			},
+			commentClick() {
+				this.$tui.navigateTo("comment/comment?good_id=" + this.params.good_id);
 			},
 			submit() {
 				if (!this.detailInfo.good_id) {
+					return false;
+				}
+				let isLogin = this.$tui.navigateToLogin();
+				if (!isLogin) {
 					return false;
 				}
 				const data = {
@@ -358,7 +333,6 @@
 				};
 				orderSubmitGoodList(data)
 					.then(res => {
-						this.loading = false;
 						if (res.code > 0) {
 							this.$tui.toast(res.message);
 							return false;
@@ -392,7 +366,7 @@
 	}
 </script>
 
-<style>
+<style lang="scss">
 	/* icon 也可以使用组件*/
 	@import "../../static/style/icon.css";
 
@@ -951,6 +925,8 @@
 		display: flex;
 		align-items: center;
 		height: 100%;
+		box-sizing: border-box;
+		padding-top: 5rpx;
 	}
 
 	.tui-operation-item {
@@ -978,15 +954,26 @@
 	}
 
 	.tui-operation-right {
-		height: 100rpx;
+		/*height: 100rpx;*/
 		/* box-sizing: border-box; */
 		padding-top: 0;
+		.tui-btn-class {
+			font-size: 30rpx !important;
+			height: 100rpx;
+			line-height: 100rpx;
+		}
+	}
+
+	.tui-operation-right-btn {
+		width: 50%;
+		height: 100%;
 	}
 
 	.tui-right-flex {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		height: 100%;
 	}
 
 	.tui-btnbox-4 .tui-btn-class {

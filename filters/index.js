@@ -1,4 +1,4 @@
-import {getUploadImagePathToUrl} from "../utils/common";
+import {getUploadImagePathToUrl,formatNum} from "../utils/common";
 
 /**
  * 把上传的图片的 path 路径转为 url 地址
@@ -74,4 +74,14 @@ export function formatDate(date_str, fmt) {
  */
 export function formatName(name) {
     return name.substr(1, 1) + "***" + name.substr(name.length - 1, 1);
+}
+
+
+/**
+ * 格式化手机号
+ * @returns {void | string | *}
+ * @param num
+ */
+export function formatTel(num) {
+    return formatNum(num);
 }

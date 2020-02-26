@@ -1,43 +1,32 @@
 <template>
 	<view class="tui-userinfo-box">
-		<tui-list-cell padding="0" :arrow="true">
+		<tui-list-cell padding="0">
 			<view class="tui-list-cell">
 				<view>头像</view>
-				<image src="/static/images/my/mine_def_touxiang_3x.png" class="tui-avatar"></image>
+				<image v-if="memberInfo.member_id > 0" :src="memberInfo.avatar" class="tui-avatar"></image>
+				<image v-else src="/static/images/my/mine_def_touxiang_3x.png" class="tui-avatar"></image>
 			</view>
 		</tui-list-cell>
-		<tui-list-cell padding="0" :hover="false">
-			<view class="tui-list-cell tui-pr30">
-				<view>用户名</view>
-				<view class="tui-content">ThorUI</view>
-			</view>
-		</tui-list-cell>
-		<tui-list-cell padding="0" :arrow="true">
+		<tui-list-cell padding="0">
 			<view class="tui-list-cell">
 				<view>昵称</view>
-				<view class="tui-content">echo.</view>
-			</view>
-		</tui-list-cell>
-		<tui-list-cell padding="0" :arrow="true">
-			<view class="tui-list-cell">
-				<view>性别</view>
-				<view class="tui-content">男</view>
-			</view>
-		</tui-list-cell>
-		<tui-list-cell padding="0" :arrow="true" :last="true" >
-			<view class="tui-list-cell">
-				<view>出生日期</view>
-				<view class="tui-content">1986-09-27</view>
+				<view class="tui-content">{{memberInfo.name}}</view>
 			</view>
 		</tui-list-cell>
 	</view>
 </template>
 
 <script>
-	import tuiListCell from "@/components/list-cell/list-cell"
+	import tuiListCell from "../../components/list-cell/list-cell"
+	import { mapGetters } from "vuex";
 	export default {
 		components: {
 			tuiListCell
+		},
+		computed: {
+			...mapGetters({
+				memberInfo: "memberInfo",
+			})
 		},
 		data() {
 			return {}

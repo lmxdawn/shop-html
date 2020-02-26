@@ -2,7 +2,8 @@ import Vue from 'vue'
 import App from './App'
 import store from './store'
 
-import { toast, navigateTo, switchTab, jumpWebView, showLoading, hideLoading } from "./utils/common";
+import { toast, navigateTo, navigateBack, switchTab, jumpWebView, showLoading, hideLoading, navigateToLogin } from "./utils/common";
+import { getToken } from "./utils/userAuth";
 import { STATIC_URL } from "./config/app";
 import * as filters from "./filters/index"; // 全局过滤器
 
@@ -25,6 +26,23 @@ const tui = {
     },
     navigateTo(path) {
         navigateTo(path)
+    },
+    navigateToLogin() {
+        if (!getToken()) {
+            navigateToLogin();
+            return false;
+        }
+        return true;
+    },
+    loginNavigateTo(path) {
+        if (!getToken()) {
+            navigateToLogin();
+            return false;
+        }
+        navigateTo(path)
+    },
+    navigateBack(delta, type, duration) {
+        navigateBack(delta, type, duration)
     },
     switchTab(path) {
         switchTab(path)

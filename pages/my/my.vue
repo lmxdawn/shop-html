@@ -8,15 +8,15 @@
 		</view>
 		<view class="tui-mybg-box">
 			<image :src="$tui.staticUrl() + '/static/images/my/my_header_bg_3x.png'" class="tui-my-bg" mode="widthFix"></image>
-			<view class="tui-header-center">
-				<image src="/static/images/my/mine_def_touxiang_3x.png" class="tui-avatar"></image>
+			<view class="tui-header-center" @tap="avatarClick">
+				<image v-if="memberInfo.member_id > 0" :src="memberInfo.avatar" class="tui-avatar"></image>
+				<image v-else src="/static/images/my/mine_def_touxiang_3x.png" class="tui-avatar"></image>
 				<view class="tui-info">
-					<view class="tui-nickname">echo. <image src="/static/images/my/icon_vip_3x.png" class="tui-img-vip"></image>
-					</view>
-					<view class="tui-explain">这家伙很懒…</view>
+					<view class="tui-nickname">{{memberInfo.name || "请登录"}}</view>
+					<view class="tui-explain">开启美好的一天</view>
 				</view>
 				<view class="tui-set-box">
-					<view class="tui-icon-box tui-icon-setup">
+					<view class="tui-icon-box tui-icon-setup" @tap.stop="clickSet">
 						<tui-icon name="setup" color="#fff" :size="26"></tui-icon>
 					</view>
 				</view>
@@ -102,12 +102,18 @@
 	import tuiButton from "../../components/extend/button/button"
 	import tuiListCell from "../../components/list-cell/list-cell"
 	import tuiDivider from "../../components/divider/divider"
+	import { mapGetters } from "vuex";
 	export default {
 		components: {
 			tuiIcon,
 			tuiButton,
 			tuiListCell,
 			tuiDivider
+		},
+		computed: {
+			...mapGetters({
+				memberInfo: "memberInfo",
+			})
 		},
 		data() {
 			return {
@@ -147,7 +153,12 @@
 			this.opcity = opcity;
 		},
 		methods: {
-
+			avatarClick() {
+				this.$tui.loginNavigateTo("userInfo/userInfo");
+			},
+			clickSet() {
+				this.$tui.loginNavigateTo("set/set");
+			}
 		}
 	}
 </script>

@@ -3,13 +3,12 @@
 		<view class="tui-box">
 			<tui-list-cell :arrow="true" :last="true" :radius="true" @click="chooseAddr">
 				<view class="tui-address">
-					<view v-if="true">
+					<view v-if="submitOrderAddress.id">
 						<view class="tui-userinfo">
-							<text class="tui-name">王大大</text> 139****7708
+							<text class="tui-name">{{submitOrderAddress.name}}</text> {{submitOrderAddress.tel | formatTel}}
 						</view>
 						<view class="tui-addr">
-							<view class="tui-addr-tag">公司</view>
-							<text>广东省深圳市南山区高新科技园中区一路</text>
+							<text>{{submitOrderAddress.address}}</text>
 						</view>
 					</view>
 					<view class="tui-none-addr" v-else>
@@ -55,7 +54,7 @@
 				<tui-list-cell :hover="false" :lineLeft="false" padding="0">
 					<view class="tui-remark-box tui-padding tui-flex">
 						<view>订单备注</view>
-						<input type="text" class="tui-remark" placeholder="选填: 请先和商家协商一致" placeholder-class="tui-phcolor"></input>
+						<input type="text" class="tui-remark" v-model="params.remark" placeholder="选填: 请先和商家协商一致" placeholder-class="tui-phcolor"></input>
 					</view>
 				</tui-list-cell>
 			</view>
@@ -91,7 +90,9 @@
 	import tuiListCell from "../../components/list-cell/list-cell"
 	import tuiBottomPopup from "../../components/bottom-popup/bottom-popup"
 	import tuiTag from "../../components/tag/tag"
-	import { orderSubmitGoodList } from "../../api/order"
+	import { mapGetters } from "vuex";
+	import { orderSubmitGoodList, orderSubmit } from "../../api/order"
+	import {orderPayWeChatMiniApp} from "../../api/orderPay";
 	export default {
 		components: {
 			tuiButton,
@@ -99,16 +100,24 @@
 			tuiBottomPopup,
 			tuiTag
 		},
+		computed: {
+			...mapGetters({
+				submitOrderAddress: "submitOrderAddress",
+			})
+		},
 		data() {
 			return {
 				hasCoupon: true,
 				insufficient: false,
 				loading: false,
+				submitLoading: false,
 				sum_money: "0.00",
 				submitOrderGood: [],
 				params: {
 					good_ids: "",
-					counts: ""
+					counts: "",
+					address_id: "",
+					remark: ""
 				}
 			}
 		},
@@ -122,10 +131,67 @@
 		},
 		methods: {
 			chooseAddr() {
-				this.$tui.navigateTo("address/address");
+				this.$tui.navigateTo("address/address?isBlock=true");
 			},
 			btnPay() {
-				this.$tui.navigateTo("orderDetail/orderDetail");
+				if (this.submitLoading) {
+					return false;
+				}
+				if (!this.submitOrderAddress.id) {
+					this.$tui.toast("请选择地址");
+					return false;
+				}
+				this.submitLoading = true;
+				this.params.address_id = this.submitOrderAddress.id;
+				orderSubmit(this.params)
+					.then(res => {
+						this.submitLoading = false;
+						if (res.code > 0) {
+							this.$tui.toast(res.message);
+							return false;
+						}
+						let order_num = res.data.order_num || "";
+						uni.getProvider({
+							service: 'payment',
+							success: (res) => {
+								if (~res.provider.indexOf('wxpay')) {
+									orderPayWeChatMiniApp({order_num: order_num})
+											.then(res => {
+												this.submitLoading = false;
+												if (res.code > 0) {
+													this.$tui.toast(res.message);
+													return false;
+												}
+												let data = res.data || {};
+												uni.requestPayment({
+													provider: 'wxpay',
+													appId: data.appId,
+													timeStamp: data.timeStamp,
+													nonceStr: data.nonceStr,
+													package: data.package,
+													signType: data.signType,
+													paySign: data.paySign,
+													success: (res) => {
+														this.$tui.navigateTo("orderDetail/orderDetail?order_num=" + order_num);
+													},
+													fail: (err) => {
+														console.log('fail:' + JSON.stringify(err));
+														this.$tui.toast(JSON.stringify(err));
+														setTimeout(() => {
+															this.$tui.navigateTo("orderDetail/orderDetail?order_num=" + order_num);
+														}, 300)
+													}
+												});
+											})
+								} else {
+									this.$tui.toast("未支持的平台");
+								}
+							}
+						});
+					})
+					.catch(() => {
+						this.submitLoading = false;
+					});
 			},
 			getOrderSubmitGoodList() {
 				if (this.loading) {
@@ -141,6 +207,10 @@
 						}
 						this.submitOrderGood = res.data.good_list || [];
 						this.sum_money = res.data.sum_money || "0.00";
+						const address = res.data.address || null;
+						if (address) {
+							this.$store.dispatch("setSubmitOrderAddress", address);
+						}
 					});
 			}
 		}
@@ -249,7 +319,7 @@
 		display: -webkit-box;
 		-webkit-box-orient: vertical;
 		-webkit-line-clamp: 2;
-		font-size: 26rpx;
+		font-size: 30rpx;
 		line-height: 32rpx;
 	}
 

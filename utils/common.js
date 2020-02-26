@@ -5,6 +5,20 @@ export function navigateTo(path) {
         url:"/pages/"+path
     });
 }
+// 跳转到登录页面
+export function navigateToLogin() {
+    uni.getProvider({
+        service: 'oauth',
+        success: (res) => {
+            if (~res.provider.indexOf('weixin')) {
+                navigateTo("login/wxMiniApp");
+            }
+        },
+        fail: () => {
+            toast("未支持的平台")
+        }
+    });
+}
 // 跳转
 export function redirectTo(path) {
     uni.redirectTo({
@@ -146,7 +160,7 @@ export function checkPwd (value) {
 }
 export function formatNum (num) {
     //格式化手机号码
-    if (utils.isMobile(num)) {
+    if (isMobile(num)) {
         num = num.replace(/^(\d{3})\d{4}(\d{4})$/, '$1****$2')
     }
     return num;

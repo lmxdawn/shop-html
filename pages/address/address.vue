@@ -1,26 +1,23 @@
 <template>
 	<view class="tui-safe-area">
 		<view class="tui-address">
-			<block v-for="(item,index) in 3" :key="index">
-				<tui-list-cell padding="0">
-					<view class="tui-address-flex">
-						<view class="tui-address-left">
-							<view class="tui-address-main">
-								<view class="tui-address-name tui-ellipsis">{{["echo.","王大大","大长腿"][index]}}</view>
-								<view class="tui-address-tel">138****7708</view>
-							</view>
-							<view class="tui-address-detail">
-								<view class="tui-address-label" v-if="index===0">默认</view>
-								<view class="tui-address-label" v-if="index!=2">{{["公司","住宅","其它"][index]}}</view>
-								<text>广东省深圳市南山区高新科技园中区一路</text>
-							</view>
+			<tui-list-cell padding="0" v-for="(item,index) in addressList" :key="index"  @tap="selectAddr(item)">
+				<view class="tui-address-flex">
+					<view class="tui-address-left">
+						<view class="tui-address-main">
+							<view class="tui-address-name tui-ellipsis">{{item.name}}</view>
+							<view class="tui-address-tel">{{item.tel | formatTel}}</view>
 						</view>
-						<view class="tui-address-imgbox">
-							<image class="tui-address-img" src="/static/images/mall/my/icon_addr_edit.png" />
+						<view class="tui-address-detail">
+							<view class="tui-address-label" v-if="item.is_default===1">默认</view>
+							<text>{{item.address}}</text>
 						</view>
 					</view>
-				</tui-list-cell>
-			</block>
+					<view class="tui-address-imgbox" @tap="editAddr(item)">
+						<image class="tui-address-img" src="/static/images/icon_addr_edit.png" />
+					</view>
+				</view>
+			</tui-list-cell>
 		</view>
 		<!-- 新增地址 -->
 		<view class="tui-address-new">
@@ -30,8 +27,9 @@
 </template>
 
 <script>
-	import tuiButton from "@/components/extend/button/button"
-	import tuiListCell from "@/components/list-cell/list-cell"
+	import tuiButton from "../../components/extend/button/button"
+	import tuiListCell from "../../components/list-cell/list-cell"
+	import { orderAddressList } from "../../api/orderAddress"
 	export default {
 		components: {
 			tuiButton,
@@ -39,18 +37,80 @@
 		},
 		data() {
 			return {
-				addressList: []
+				addressList: [],
+				loading: false,
+				isLoadMore: true,
+				params: {
+					page: 1,
+					count: 20
+				},
+				isBlock: false
 			}
 		},
-		onLoad: function(options) {
-
+		onLoad(options) {
+			this.getOrderAddressList();
+			this.isBlock = options.isBlock || false;
 		},
-		onShow: function() {},
+		onPullDownRefresh() {
+			// 清空之前的
+			this.init();
+		},
+		onReachBottom() {
+			this.loadMore();
+		},
+		onShow() {
+			this.init();
+		},
 		methods: {
-			editAddr(index, addressType) {
-				uni.navigateTo({
-					url: "../editAddress/editAddress"
-				})
+			selectAddr(item) {
+				if (!this.isBlock) {
+					return false;
+				}
+				this.$store.dispatch("setSubmitOrderAddress", item);
+				this.$tui.navigateBack(1);
+			},
+			editAddr(item) {
+				let url = "addressEdit/addressEdit";
+				if (item && item.id) {
+					url += "?id=" + item.id;
+				}
+				this.$tui.navigateTo(url);
+			},
+			init() {
+				this.params.page = 1;
+				this.isLoadMore = true;
+				console.log(11);
+				this.loadMore();
+			},
+			loadMore() {
+				if (!this.isLoadMore) {
+					uni.stopPullDownRefresh();
+					return false;
+				}
+				this.getOrderAddressList();
+			},
+			getOrderAddressList() {
+				if (this.loading) {
+					uni.stopPullDownRefresh();
+					return false;
+				}
+				this.loading = true;
+				orderAddressList(this.params)
+					.then(res => {
+						this.loading = false;
+						uni.stopPullDownRefresh();
+						if (this.params.page === 1) {
+							this.addressList = [];
+						}
+						this.params.page++;
+						const list = res.data || [];
+						for (let item of list) {
+							this.addressList.push(item);
+						}
+						if (list.length < this.params.count) {
+							this.isLoadMore = false;
+						}
+					})
 			}
 		}
 	}

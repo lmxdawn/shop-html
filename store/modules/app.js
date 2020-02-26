@@ -8,7 +8,7 @@ const state = {
     currentDate: Math.floor(new Date().getTime() / 1000), //当前日期 会用服务器返回的数据
     guide: getStorageSync(guideKey) || false, // 引导页面
     adParams: {}, // 广告点击的参数
-    submitOrderGood: [], // 下单时的商品列表
+    submitOrderAddress: {}, // 下单时的地址
 };
 
 // getters
@@ -17,7 +17,7 @@ const getters = {
     currentDate: state => state.currentDate,
     guide: state => state.guide,
     adParams: state => state.adParams,
-    submitOrderGood: state => state.submitOrderGood,
+    submitOrderAddress: state => state.submitOrderAddress,
 };
 
 // actions
@@ -34,8 +34,8 @@ const actions = {
     setAdParams({ commit }, item) {
         commit(types.AD_PARAMS, item);
     },
-    setSubmitOrderGood({ commit }, list) {
-        commit(types.SUBMIT_ORDER_GOOD, list);
+    setSubmitOrderAddress({ commit }, list) {
+        commit(types.SUBMIT_ORDER_ADDRESS, list);
     }
 };
 
@@ -59,8 +59,8 @@ const mutations = {
         state.adParams[item.key] = item.value;
     },
     // 下单时的商品
-    [types.SUBMIT_ORDER_GOOD](state, list) {
-        state.submitOrderGood = list;
+    [types.SUBMIT_ORDER_ADDRESS](state, item) {
+        state.submitOrderAddress = item;
     }
 };
 export default {

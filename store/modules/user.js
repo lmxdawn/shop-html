@@ -1,28 +1,32 @@
 import * as types from "../mutation-types";
 import { memberInfo } from "../../api/member";
-import { getToken, delToken, delUserInit } from "../../utils/userAuth";
+import { getToken, delToken, getMemberInit, delMemberInit } from "../../utils/userAuth";
+
+const member = getMemberInit();
 
 const state = {
-    userInfo: {
-        id: 0,
-        name: "",
+    memberInfo: {
+        member_id: parseInt(member.member_id) || 0,
+        name: member.name || "",
+        avatar: member.avatar || "",
     }
 };
 
 // getters
 const getters = {
-    userInfo: state => state.userInfo,
+    memberInfo: state => state.memberInfo,
 };
 
 // actions
 const actions = {
     logout({ commit }) {
         let info = {
-            id: 0,
+            member_id: 0,
             name: "",
+            avatar: "",
         };
-        commit(types.USER_INFO, info);
-        commit(types.USER_CLEAR_LOGIN);
+        commit(types.MEMBER_INFO, info);
+        commit(types.MEMBER_CLEAR_LOGIN);
     },
     getUserInfo({ commit }) {
         return new Promise((resolve, reject) => {
@@ -41,10 +45,11 @@ const actions = {
                     let data = res.data;
 
                     let info = {
-                        id: data.id || 0,
+                        member_id: data.member_id || 0,
                         name: data.name || "",
+                        avatar: data.avatar || "",
                     };
-                    commit(types.USER_INFO, info);
+                    commit(types.MEMBER_INFO, info);
                     resolve(info);
                 })
                 .catch(err => {
@@ -58,18 +63,13 @@ const actions = {
 // mutations
 const mutations = {
     //清空信息
-    [types.USER_CLEAR_LOGIN](state) {
+    [types.MEMBER_CLEAR_LOGIN](state) {
         delToken();
-        delUserInit();
-        // 如果在登录页面, 则不要重复跳转
-        if (state.loginStatus) {
-            return false;
-        }
+        delMemberInit();
     },
     //设置用户信息
-    [types.USER_INFO](state, userInfo) {
-        state.userInfo = userInfo;
-        state.saveUserInfo = userInfo;
+    [types.MEMBER_INFO](state, memberInfo) {
+        state.memberInfo = memberInfo;
     }
 };
 export default {

@@ -4,13 +4,13 @@
 			<tui-list-cell :hover="false" padding="0">
 				<view class="tui-line-cell">
 					<view class="tui-title">收货人</view>
-					<input placeholder-class="tui-phcolor" class="tui-input" name="name" placeholder="请输入收货人姓名" maxlength="15" type="text" />
+					<input placeholder-class="tui-phcolor" class="tui-input" v-model="item.name" placeholder="请输入收货人姓名" maxlength="15" type="text" />
 				</view>
 			</tui-list-cell>
 			<tui-list-cell :hover="false" padding="0">
 				<view class="tui-line-cell">
 					<view class="tui-title">手机号码</view>
-					<input placeholder-class="tui-phcolor" class="tui-input" name="mobile" placeholder="请输入收货人手机号码" maxlength="11"
+					<input placeholder-class="tui-phcolor" class="tui-input" v-model="item.tel" placeholder="请输入收货人手机号码" maxlength="11"
 					 type="text" />
 				</view>
 			</tui-list-cell>
@@ -23,15 +23,7 @@
 			<tui-list-cell :hover="false" padding="0">
 				<view class="tui-line-cell">
 					<view class="tui-title">收货地址</view>
-					<input placeholder-class="tui-phcolor" class="tui-input" name="address" placeholder="请输入详细的收货地址" maxlength="50" type="text" />
-				</view>
-			</tui-list-cell>
-			<tui-list-cell :hover="false" padding="0">
-				<view class="tui-line-cell">
-					<view class="tui-cell-title">地址类型</view>
-					<view class="tui-addr-label">
-						<text v-for="(item,index) in lists" :key="index" class="tui-label-item" :class="{'tui-label-active':index==1}">{{item}}</text>
-					</view>
+					<input placeholder-class="tui-phcolor" class="tui-input" v-model="item.address" placeholder="请输入详细的收货地址" maxlength="50" type="text" />
 				</view>
 			</tui-list-cell>
 
@@ -39,24 +31,25 @@
 			<tui-list-cell :hover="false" padding="0">
 				<view class="tui-swipe-cell">
 					<view>设为默认地址</view>
-					<switch checked color="#30CC67" class="tui-switch-small" />
+					<switch :checked="item.is_default === 1" @change="defaultChange" color="#30CC67" class="tui-switch-small" />
 				</view>
 			</tui-list-cell>
 			<!-- 保存地址 -->
 			<view class="tui-addr-save">
-				<tui-button type="danger" height="88rpx">保存收货地址</tui-button>
+				<tui-button type="danger" height="88rpx" @tap="ok">保存收货地址</tui-button>
 			</view>
-			<view class="tui-del" v-if="false">
-				<tui-button type="gray" height="88rpx">删除收货地址</tui-button>
+			<view class="tui-del" v-if="item.id">
+				<tui-button type="gray" height="88rpx" @tap="del">删除收货地址</tui-button>
 			</view>
 		</form>
 	</view>
 </template>
 
 <script>
-	import tuiButton from "@/components/extend/button/button"
-	import tuiListView from "@/components/list-view/list-view"
-	import tuiListCell from "@/components/list-cell/list-cell"
+	import tuiButton from "../../components/extend/button/button"
+	import tuiListView from "../../components/list-view/list-view"
+	import tuiListCell from "../../components/list-cell/list-cell"
+	import { orderAddressRead, orderAddressSave, orderAddressDel } from "../../api/orderAddress"
 	export default {
 		components: {
 			tuiButton,
@@ -65,10 +58,100 @@
 		},
 		data() {
 			return {
-				lists: ["公司", "家", "学校", "其他"]
+				item: {
+					id: "",
+					name: "",
+					tel: "",
+					province: "22",
+					city: "33",
+					area: "44",
+					is_default: 0,
+					address: "",
+				},
+				readLoading: false,
+				loading: false
 			}
 		},
-		methods: {}
+		onLoad(options) {
+			this.item.id = options.id;
+			this.read();
+		},
+		methods: {
+			defaultChange(e) {
+				this.item.is_default = e.target.value ? 1 : 0;
+			},
+			ok() {
+				if (this.loading) {
+					return false;
+				}
+				if (!this.item.name) {
+					this.$tui.toast("请输入收货人姓名");
+					return false;
+				}
+				if (!this.item.tel) {
+					this.$tui.toast("请输入收货人电话");
+					return false;
+				}
+				if (!this.item.province || !this.item.city || !this.item.area) {
+					this.$tui.toast("请选择所在城市");
+					return false;
+				}
+				if (!this.item.address) {
+					this.$tui.toast("请输入详细地址");
+					return false;
+				}
+				this.loading = true;
+				orderAddressSave(this.item)
+					.then(res => {
+						this.loading = false;
+						if (res.code > 0) {
+							this.$tui.toast(res.message);
+							return false;
+						}
+						this.$tui.toast("添加成功");
+						setTimeout(() => {
+							this.$tui.navigateBack(1);
+						}, 300)
+					})
+					.catch(() => {
+						this.loading = false;
+					})
+			},
+			del() {
+				uni.showModal({
+					title: '提示',
+					content: '确认删除？',
+					success: (res) => {
+						if (res.confirm) {
+							orderAddressDel(this.item)
+								.then(res => {
+									if (res.code > 0) {
+										this.$tui.toast(res.message);
+										return false;
+									}
+									this.$tui.toast("删除成功");
+									setTimeout(() => {
+										this.$tui.navigateBack(1);
+									}, 300)
+								})
+						}
+					}
+				});
+			},
+			read() {
+				if (!this.item.id) {
+					return false;
+				}
+				orderAddressRead({id: this.item.id})
+					.then(res => {
+						if (res.code > 0) {
+							this.$tui.toast(res.message);
+							return false;
+						}
+						this.item = res.data || {};
+					})
+			}
+		}
 	}
 </script>
 

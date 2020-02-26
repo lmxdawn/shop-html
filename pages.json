@@ -3,8 +3,6 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black",
 				"backgroundColorTop": "#F7F7F7",
 				"backgroundColorBottom": "#F7F7F7",
 				"navigationBarTitleText": "商城",
@@ -79,8 +77,6 @@
 			"path": "pages/my/my",
 			"style": {
 				"navigationBarTitleText": "我的",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black",
 				"enablePullDownRefresh": true,
 				"onReachBottomDistance": 50,
 				"navigationStyle": "custom",
@@ -93,42 +89,45 @@
 			"path": "pages/address/address",
 			"style": {
 				"navigationBarTitleText": "地址",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black"
+				"enablePullDownRefresh": true,
+				"h5": {
+					"titleNView": false
+				}
 			}
 		},
 		{
 			"path": "pages/addressEdit/addressEdit",
 			"style": {
 				"navigationBarTitleText": "新增地址",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black"
+				"h5": {
+					"titleNView": false
+				}
 			}
 		},
 		{
 			"path": "pages/myOrder/myOrder",
 			"style": {
 				"navigationBarTitleText": "我的订单",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black",
 				"enablePullDownRefresh": true,
-				"onReachBottomDistance": 50
+				"onReachBottomDistance": 50,
+				"h5": {
+					"titleNView": false
+				}
 			}
 		},
 		{
 			"path": "pages/set/set",
 			"style": {
 				"navigationBarTitleText": "账户设置",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black"
+				"h5": {
+					"titleNView": false
+				}
 			}
 		},
 		{
 			"path": "pages/submitOrder/submitOrder",
 			"style": {
 				"navigationBarTitleText": "提交订单",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black",
 				"enablePullDownRefresh": true,
 				"h5": {
 					"titleNView": false
@@ -139,8 +138,6 @@
 			"path": "pages/orderDetail/orderDetail",
 			"style": {
 				"navigationBarTitleText": "订单详情",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black",
 				"h5": {
 					"titleNView": false
 				}
@@ -150,23 +147,23 @@
 			"path": "pages/success/success",
 			"style": {
 				"navigationBarTitleText": "支付成功",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black"
+				"h5": {
+					"titleNView": false
+				}
 			}
 		},
 		{
 			"path": "pages/userInfo/userInfo",
 			"style": {
 				"navigationBarTitleText": "个人信息",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black"
+				"h5": {
+					"titleNView": false
+				}
 			}
 		},
 		{
 			"path": "pages/productList/productList",
 			"style": {
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black",
 				"backgroundColorTop": "#F7F7F7",
 				"backgroundColorBottom": "#F7F7F7",
 				"navigationBarTitleText": "商品列表 ",
@@ -180,8 +177,6 @@
 		{
 			"path": "pages/productDetail/productDetail",
 			"style": {
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black",
 				"backgroundColorTop": "#F7F7F7",
 				"backgroundColorBottom": "#F7F7F7",
 				"navigationBarTitleText": "商品详情 ",
@@ -192,13 +187,30 @@
 			}
 		},
 		{
+			"path": "pages/comment/comment",
+			"style": {
+				"navigationBarTitleText": "商品评价",
+				"enablePullDownRefresh": true,
+				"h5": {
+					"titleNView": false
+				}
+			}
+		},
+		{
 			"path": "pages/search/search",
 			"style": {
 				"navigationBarTitleText": "搜索",
-				"navigationBarBackgroundColor": "#fff",
-				"navigationBarTextStyle": "black",
 				"backgroundColorTop": "#fff",
 				"backgroundColorBottom": "#fff",
+				"h5": {
+					"titleNView": false
+				}
+			}
+		},
+		{
+			"path": "pages/login/wxMiniApp",
+			"style": {
+				"navigationBarTitleText": "登录",
 				"h5": {
 					"titleNView": false
 				}
