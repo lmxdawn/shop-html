@@ -16,6 +16,11 @@
 		},
 		methods: {
 		},
+		onShow() {
+			this.$nextTick(() => {
+				this.$refs.cart.init()
+			})
+		},
 		onPullDownRefresh() {
 			this.$refs.cart.pullDownRefresh()
 		},

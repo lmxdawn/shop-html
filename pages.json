@@ -31,6 +31,7 @@
 			"path": "pages/cart/index",
 			"style": {
 				"navigationBarTitleText": "购物车",
+				"enablePullDownRefresh": true,
 				"h5": {
 					"titleNView": false
 				},
@@ -54,6 +55,7 @@
 			"path": "pages/cart/tabIndex",
 			"style": {
 				"navigationBarTitleText": "购物车",
+				"enablePullDownRefresh": true,
 				"h5": {
 					"titleNView": false
 				},

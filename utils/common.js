@@ -76,9 +76,10 @@ export function toast(msg, duration, success){
 /**
  * 显示加载
  */
-export function showLoading(title){
+export function showLoading(title, mask){
     uni.showLoading({
-        title: title || '加载中'
+        title: title || '加载中',
+        mask: mask || false
     });
 }
 

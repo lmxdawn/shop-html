@@ -207,6 +207,7 @@
 	import tuiSkeleton from "../../components/tui-skeleton/tui-skeleton"
 	import { goodDetail } from "../../api/good"
 	import { orderSubmitGoodList } from "../../api/order"
+	import { orderCartSave } from "../../api/orderCart";
 	export default {
 		components: {
 			tuiIcon,
@@ -305,7 +306,7 @@
 				this.$tui.switchTab("my/my");
 			},
 			cartClick() {
-				this.$tui.switchTab("cart/cart");
+				this.$tui.switchTab("cart/tabIndex");
 			},
 			shareClick() {
 				this.$tui.toast("分享");
@@ -315,6 +316,23 @@
 				if (!isLogin) {
 					return false;
 				}
+				const data = {
+					good_id: this.detailInfo.good_id,
+					count: 1
+				};
+				this.$tui.showLoading();
+				orderCartSave(data)
+						.then(res => {
+							this.$tui.hideLoading();
+							if (res.code > 0) {
+								this.$tui.toast(res.message);
+								return false;
+							}
+							this.$tui.toast("加入购物车成功");
+						})
+						.catch(() => {
+							this.$tui.hideLoading();
+						})
 			},
 			commentClick() {
 				this.$tui.navigateTo("comment/comment?good_id=" + this.params.good_id);

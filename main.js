@@ -50,8 +50,8 @@ const tui = {
     jumpWebView(url) {
         jumpWebView(url)
     },
-    showLoading(title) {
-        showLoading(title)
+    showLoading(title, mask) {
+        showLoading(title, mask)
     },
     hideLoading() {
         hideLoading()

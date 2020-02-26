@@ -212,7 +212,7 @@
 					return false;
 				}
 				this.loading = true;
-				goodRecommend()
+				goodRecommend(this.params)
 						.then(res => {
 							this.loading = false;
 							this.params.page++;

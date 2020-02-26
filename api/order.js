@@ -1,5 +1,14 @@
 import request from "../utils/request";
 
+// 下单时获取商品列表
+export function orderList(params) {
+    return request({
+        url: "/api/order/order/index",
+        method: "get",
+        params: params
+    });
+}
+
 // 下单
 export function orderSubmit(data) {
     return request({
@@ -18,10 +27,19 @@ export function orderRead(params) {
     });
 }
 
-// 订单删除
+// 订单取消
 export function orderCancel(data) {
     return request({
         url: "/api/order/order/cancel",
+        method: "post",
+        data: data
+    });
+}
+
+// 订单确认收货
+export function orderOk(data) {
+    return request({
+        url: "/api/order/order/ok",
         method: "post",
         data: data
     });
@@ -35,3 +53,4 @@ export function orderSubmitGoodList(data) {
         data: data
     });
 }
+

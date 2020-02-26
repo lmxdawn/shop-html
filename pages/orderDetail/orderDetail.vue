@@ -30,11 +30,12 @@
 				</view>
 			</tui-list-cell>
 			<tui-list-cell padding="0" v-for="(item,index) in goodList" :key="index">
-				<view class="tui-goods-item">
+				<view class="tui-goods-item" @click="goodDetail(item)">
 					<image :src="item.original_img" class="tui-goods-img"></image>
 					<view class="tui-goods-center">
 						<view class="tui-goods-name">{{item.good_name}}</view>
 						<view class="tui-goods-attr">
+							<text class="tui-goods-attr-tag">自营</text>
 							<text class="tui-goods-attr-tag" v-if="item.is_hot === 1" size="small" :plain="true" type="red" shape="circle">热卖</text>
 							<text class="tui-goods-attr-tag" v-if="item.is_new === 1" size="small" :plain="true" type="high-green" shape="circle">新品</text>
 							<text class="tui-goods-attr-tag" v-if="item.is_recommend === 1" size="small" :plain="true" type="warning" shape="circle">推荐</text>
@@ -140,6 +141,9 @@
 			},
 			getReason(status) {
 				return ["剩余时间", "等待卖家发货", "等待用户收货", "", "超时未付款，订单自动取消"][status]
+			},
+			goodDetail(item) {
+				this.$tui.navigateTo("productDetail/productDetail?good_id=" + item.good_id);
 			},
 			getOrderRead() {
 				if (this.loading) {

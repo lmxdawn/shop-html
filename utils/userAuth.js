@@ -1,8 +1,8 @@
 import { getStorageSync, setStorageSync, removeStorageSync } from "./storage";
 
 const memberIdKey = "member_id";
-const tokenKey = "user_token";
-const initKey = "user_init";
+const tokenKey = "member_token";
+const initKey = "member_init";
 
 // 获取用户的本地token
 export function getToken() {

@@ -25,44 +25,40 @@
 
 		<view class="tui-content-box">
 			<view class="tui-box tui-order-box">
-				<tui-list-cell :arrow="true" padding="0" :lineLeft="false" @click="href(4)">
+				<tui-list-cell :arrow="true" padding="0" :lineLeft="false" @click="orderClick('')">
 					<view class="tui-cell-header">
 						<view class="tui-cell-title">我的订单</view>
 						<view class="tui-cell-sub">查看全部订单</view>
 					</view>
 				</tui-list-cell>
 				<view class="tui-order-list">
-					<view class="tui-order-item">
+					<view class="tui-order-item" @tap="orderClick(0)">
 						<view class="tui-icon-box">
 							<image src="/static/images/my/icon_daifukuan_3x.png" class="tui-order-icon"></image>
-							<view class="tui-badge tui-badge-red">1</view>
 						</view>
 						<view class="tui-order-text">待付款</view>
 					</view>
-					<view class="tui-order-item">
+					<view class="tui-order-item" @tap="orderClick(1)">
 						<view class="tui-icon-box">
 							<image src="/static/images/my/icon_daifahuo_3x.png" class="tui-order-icon"></image>
-							<view class="tui-badge tui-badge-red">1</view>
 						</view>
 						<view class="tui-order-text">待发货</view>
 					</view>
-					<view class="tui-order-item">
+					<view class="tui-order-item" @tap="orderClick(2)">
 						<view class="tui-icon-box">
 							<image src="/static/images/my/icon_daishouhuo_3x.png" class="tui-order-icon"></image>
 						</view>
 						<view class="tui-order-text">待收货</view>
 					</view>
-					<view class="tui-order-item">
+					<view class="tui-order-item" @tap="orderClick(3)">
 						<view class="tui-icon-box">
 							<image src="/static/images/my/icon_pingjia_3x.png" class="tui-order-icon"></image>
-							<view class="tui-badge tui-badge-red" v-if="false">12</view>
 						</view>
 						<view class="tui-order-text">评价</view>
 					</view>
-					<view class="tui-order-item">
+					<view class="tui-order-item" @tap="tuikuanClick">
 						<view class="tui-icon-box">
 							<image src="/static/images/my/icon_tuikuan_3x.png" class="tui-order-icon"></image>
-							<view class="tui-badge tui-badge-red">2</view>
 						</view>
 						<view class="tui-order-text">退款/售后</view>
 					</view>
@@ -70,27 +66,22 @@
 			</view>
 
 			<view class="tui-box tui-assets-box" >
-				<tui-list-cell :arrow="true" class="tui-list">
-					<tui-icon name="wealth-fill" :size="24" color="#ff7900"></tui-icon>
-					<text class="tui-list-cell-name">我的钱包</text>
+				<tui-list-cell :arrow="true" class="tui-list" @tap="couponClick">
+					<tui-icon name="redpacket" :size="24" color="#ff7900"></tui-icon>
+					<text class="tui-list-cell-name">优惠券</text>
+					<view class="tui-right">暂无可用</view>
 				</tui-list-cell>
-				<tui-list-cell :arrow="true" class="tui-list">
-					<tui-icon name="service-fill" :size="24" color="#5677fc"></tui-icon>
-					<view class="tui-list-cell-name">服务窗</view>
+				<tui-list-cell :arrow="true" class="tui-list" @tap="addressClick">
+					<tui-icon name="gps" :size="23" color="#5677fc"></tui-icon>
+					<view class="tui-list-cell-name">地址管理</view>
 				</tui-list-cell>
-				<tui-list-cell :arrow="true" class="tui-list">
-					<tui-icon name="explore-fill" :size="24" color="#19be6b"></tui-icon>
-					<view class="tui-list-cell-name">发现</view>
+				<tui-list-cell :arrow="true" class="tui-list" @tap="problemClick">
+					<tui-icon name="explain-fill" :size="24" color="#19be6b"></tui-icon>
+					<view class="tui-list-cell-name">常见问题</view>
 				</tui-list-cell>
-				<tui-list-cell :arrow="true" class="tui-list">
-					<tui-icon name="shop-fill" :size="23" color="#ed3f14"></tui-icon>
-					<view class="tui-list-cell-name">我的店铺</view>
-					<view class="tui-right">进入店铺</view>
-				</tui-list-cell>
-				<tui-list-cell :arrow="true" :last="true" class="tui-list">
-					<image src="/static/images/logo.png" class="logo" mode="widthFix"></image>
-					<text class="tui-list-cell-name">关于</text>
-					<view class="tui-right">Thor UI</view>
+				<tui-list-cell :arrow="true" class="tui-list" @tap="helpClick">
+					<tui-icon name="kefu" :size="23" color="#ee659f"></tui-icon>
+					<view class="tui-list-cell-name">客服与帮助</view>
 				</tui-list-cell>
 			</view>
 		</view>
@@ -158,7 +149,26 @@
 			},
 			clickSet() {
 				this.$tui.loginNavigateTo("set/set");
-			}
+			},
+			tuikuanClick() {
+				this.$tui.toast("功能开发中...");
+			},
+			orderClick(status) {
+				// this.$tui.loginNavigateTo("myOrder/myOrder?type=" + type);
+				this.$tui.navigateTo("myOrder/myOrder?status=" + status);
+			},
+			couponClick() {
+				this.$tui.toast("功能开发中...");
+			},
+			addressClick() {
+				this.$tui.loginNavigateTo("address/address");
+			},
+			problemClick() {
+				this.$tui.toast("功能开发中...");
+			},
+			helpClick() {
+				this.$tui.toast("功能开发中...");
+			},
 		}
 	}
 </script>
@@ -304,12 +314,12 @@
 	}
 
 	.tui-order-box {
-		height: 208rpx;
+		height: 260rpx;
 	}
 
 	.tui-cell-header {
 		width: 100%;
-		height: 74rpx;
+		height: 100rpx;
 		padding: 0 26rpx;
 		box-sizing: border-box;
 		display: flex;
@@ -367,6 +377,10 @@
 		margin-top: 20rpx;
 	}
 
+	.tui-list {
+		height: 120rpx;
+		border-bottom: 1px solid #fbfbfb;
+	}
 	.tui-list-cell-name {
 		padding-left: 20rpx;
 		vertical-align: middle;
@@ -374,5 +388,13 @@
 	}
 	.tui-list::after {
 		left: 94upx !important
+	}
+
+	.tui-right {
+		margin-left: auto;
+		margin-right: 34upx;
+		font-size: 26upx;
+		line-height: 1;
+		color: #999;
 	}
 </style>

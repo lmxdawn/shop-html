@@ -1,115 +1,111 @@
 <template>
 	<view class="container">
-		<!-- #ifdef MP || H5-->
-		<view class="tui-edit-goods">
-			<view>购物车共<text class="tui-goods-num">2</text>件商品</view>
-			<view>
-				<tui-button type="gray" :plain="true" shape="circle" width="160rpx" height="60rpx" :size="24" @click="editGoods">{{isEdit?"完成":"编辑商品"}}</tui-button>
+		<tui-tips v-if="dataList.length === 0" style="margin-top: 100rpx;" :fixed="false" imgUrl="/static/images/toast/img_nodata.png">购物车空空如也，赶紧去逛逛吧~</tui-tips>
+		<view v-else>
+			<!-- #ifdef MP || H5-->
+			<view class="tui-edit-goods">
+				<view>购物车共<text class="tui-goods-num">{{dataList.length}}</text>件商品</view>
+				<view>
+					<tui-button type="gray" :plain="true" shape="circle" width="160rpx" height="60rpx" :size="24" @click="editGoods">{{isEdit?"完成":"编辑商品"}}</tui-button>
+				</view>
 			</view>
-		</view>
-		<!-- #endif -->
-		<checkbox-group>
-			<view class="tui-cart-cell  tui-mtop" v-for="(item,index) in dataList" :key="index">
-				<view class="tui-activity" v-if="index%2==0">
-					<view class="tui-bold">满3件享受优惠</view>
-					<view class="tui-buy">去凑单<tui-icon name="arrowright" :size="18" color="#333"></tui-icon>
+			<!-- #endif -->
+			<checkbox-group>
+				<view class="tui-cart-cell  tui-mtop" v-for="(item,index) in dataList" :key="index">
+					<view class="tui-goods-item">
+						<label class="tui-checkbox" v-if="isEdit" @tap="goodSelect(index, item)">
+							<checkbox disabled :checked="item.is_select === 1" color="#fff"></checkbox>
+						</label>
+						<label class="tui-checkbox" v-else @tap="goodClick(index, item)">
+							<checkbox disabled :checked="item.is_check === 1" color="#fff"></checkbox>
+						</label>
+						<image :src="item.original_img" class="tui-goods-img" />
+						<view class="tui-goods-info">
+							<view class="tui-goods-title">
+								{{item.good_name}}
+							</view>
+							<view class="tui-goods-model">
+								<text class="tui-goods-attr-tag">自营</text>
+								<text class="tui-goods-attr-tag" v-if="item.is_hot === 1">热卖</text>
+								<text class="tui-goods-attr-tag" v-if="item.is_new === 1">新品</text>
+								<text class="tui-goods-attr-tag" v-if="item.is_recommend === 1">推荐</text>
+							</view>
+							<view class="tui-price-box">
+								<view class="tui-goods-price">￥{{item.money}}</view>
+								<view class="tui-scale">
+									<tui-numberbox :value="item.count" :height="40" :width="74" :min="1" :index="index" @change="changeNum"></tui-numberbox>
+								</view>
+							</view>
+						</view>
 					</view>
 				</view>
-				<tui-swipe-action :actions="actions" @click="handlerButton" :params="item">
-					<template v-slot:content>
-						<view class="tui-goods-item">
-							<label class="tui-checkbox">
-								<checkbox color="#fff"></checkbox>
-							</label>
-							<image :src="'/static/images/mall/product/'+(index%2==0?'1.jpg':'4.jpg')" class="tui-goods-img" />
-							<view class="tui-goods-info">
-								<view class="tui-goods-title">
-									{{index%2==0?"欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜彩粉嫩透亮修颜霜透亮修颜霜透亮修颜霜":"百雀羚套装女补水保湿护肤品"}}
-								</view>
-								<view class="tui-goods-model">
-									<view class="tui-model-text">{{index%2==0?"440ml;10件;套装":"500ml;2支"}}</view>
-									<tui-icon name="arrowdown" :size="16" color="#333"></tui-icon>
-								</view>
-								<view class="tui-price-box">
-									<view class="tui-goods-price">￥500</view>
-									<view class="tui-scale">
-										<tui-numberbox :value="item.buyNum" :height="40" :width="74" :min="1" :index="index" @change="changeNum"></tui-numberbox>
-									</view>
-								</view>
-							</view>
-						</view>
-					</template>
-				</tui-swipe-action>
-				<view class="tui-sub-info" v-if="index%2==0">赠品：柔色尽情丝柔口红唇膏1支柔色尽情丝柔口红唇膏1支</view>
-			</view>
-		</checkbox-group>
+			</checkbox-group>
 
-		<!--猜你喜欢-->
-
-		<tui-divider :size="28" :bold="true" color="#333" width="50%">
-			<tui-icon name="like" :size="18" color="#e41f19"></tui-icon>
-			<text class="tui-youlike">猜你喜欢</text>
-		</tui-divider>
-		<view class="tui-product-list">
-			<view class="tui-product-container">
-				<block v-for="(item,index) in productList" :key="index" v-if="(index+1)%2!=0">
+			<!--猜你喜欢-->
+			<tui-divider :size="28" :bold="true" color="#333" width="50%">
+				<tui-icon name="like" :size="18" color="#e41f19"></tui-icon>
+				<text class="tui-youlike">猜你喜欢</text>
+			</tui-divider>
+			<view class="tui-product-list">
+				<view class="tui-product-container">
 					<!--商品列表-->
-					<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
-						<image :src="'/static/images/mall/product/'+item.img+'.jpg'" class="tui-pro-img" mode="widthFix" />
+					<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" v-for="(item,index) in productList" :key="index" v-if="(index+1)%2!==0" @tap="goodDetail(item)">
+						<image :src="item.original_img" class="tui-pro-img" mode="widthFix" />
 						<view class="tui-pro-content">
-							<view class="tui-pro-tit">{{item.name}}</view>
+							<view class="tui-pro-tit">{{item.good_name}}</view>
 							<view>
 								<view class="tui-pro-price">
-									<text class="tui-sale-price">￥{{item.sale}}</text>
-									<text class="tui-factory-price">￥{{item.factory}}</text>
+									<text class="tui-sale-price">￥{{item.shop_price}}</text>
+									<text class="tui-factory-price">￥{{item.cost_price}}</text>
 								</view>
-								<view class="tui-pro-pay">{{item.payNum}}人付款</view>
+								<view class="tui-pro-pay">已售{{item.sales_sum}}{{item.unit}}</view>
 							</view>
 						</view>
 					</view>
 					<!--商品列表-->
-					<!-- <template is="productItem" data="{{item,index:index}}" /> -->
-				</block>
-			</view>
-			<view class="tui-product-container">
-				<block v-for="(item,index) in productList" :key="index" v-if="(index+1)%2==0">
-					<!--商品列表-->
-					<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" @tap="detail">
-						<image :src="'/static/images/mall/product/'+item.img+'.jpg'" class="tui-pro-img" mode="widthFix" />
+				</view>
+				<view class="tui-product-container">
+					<view class="tui-pro-item" hover-class="hover" :hover-start-time="150" v-for="(item,index) in productList" :key="index" v-if="(index+1)%2===0" @tap="goodDetail(item)">
+						<image :src="item.original_img" class="tui-pro-img" mode="widthFix" />
 						<view class="tui-pro-content">
-							<view class="tui-pro-tit">{{item.name}}</view>
+							<view class="tui-pro-tit">{{item.good_name}}</view>
 							<view>
 								<view class="tui-pro-price">
-									<text class="tui-sale-price">￥{{item.sale}}</text>
-									<text class="tui-factory-price">￥{{item.factory}}</text>
+									<text class="tui-sale-price">￥{{item.shop_price}}</text>
+									<text class="tui-factory-price">￥{{item.cost_price}}</text>
 								</view>
-								<view class="tui-pro-pay">{{item.payNum}}人付款</view>
+								<view class="tui-pro-pay">已售{{item.sales_sum}}{{item.unit}}</view>
 							</view>
 						</view>
 					</view>
-				</block>
+				</view>
 			</view>
+
+			<!--tabbar-->
+			<view class="tui-tabbar">
+				<view class="tui-checkAll">
+					<checkbox-group>
+						<label class="tui-checkbox" v-if="isEdit" @click="allSelect">
+							<checkbox disabled :checked="selectCount === dataList.length" color="#fff"></checkbox>
+							<text class="tui-checkbox-pl">全选</text>
+						</label>
+						<label class="tui-checkbox" v-else @click="allClick">
+							<checkbox disabled :checked="sumCount === dataList.length" color="#fff"></checkbox>
+							<text class="tui-checkbox-pl">全选</text>
+						</label>
+					</checkbox-group>
+					<view class="tui-total-price" v-if="!isEdit">合计:<text class="tui-bold">￥{{sumMoney}}</text> </view>
+				</view>
+				<view>
+					<tui-button width="200rpx" height="70rpx" :size="30" type="danger" shape="circle" v-if="!isEdit" @click="btnPay">去结算({{sumCount}})</tui-button>
+					<tui-button width="200rpx" height="70rpx" :size="30" type="danger" shape="circle" :plain="true" v-else @tap="deleteGood">删除</tui-button>
+				</view>
+			</view>
+			<!--加载loadding-->
+			<tui-loadmore :visible="loading" :index="3" type="red"></tui-loadmore>
+			<tui-nomore :visible="!isLoadMore" bgcolor="#fafafa"></tui-nomore>
 		</view>
 
-		<!--tabbar-->
-		<view class="tui-tabbar">
-			<view class="tui-checkAll">
-				<checkbox-group>
-					<label class="tui-checkbox">
-						<checkbox color="#fff"></checkbox>
-						<text class="tui-checkbox-pl">全选</text>
-					</label>
-				</checkbox-group>
-				<view class="tui-total-price" v-if="!isEdit">合计:<text class="tui-bold">￥800</text> </view>
-			</view>
-			<view>
-				<tui-button width="200rpx" height="70rpx" :size="30" type="danger" shape="circle" v-if="!isEdit" @click="btnPay">去结算(0)</tui-button>
-				<tui-button width="200rpx" height="70rpx" :size="30" type="danger" shape="circle" :plain="true" v-else>删除</tui-button>
-			</view>
-		</view>
-		<!--加载loadding-->
-		<tui-loadmore :visible="loadding" :index="3" type="red"></tui-loadmore>
-		<tui-nomore :visible="!pullUpOn" bgcolor="#fafafa"></tui-nomore>
 	</view>
 </template>
 
@@ -121,6 +117,10 @@
 	import tuiDivider from "../../components/divider/divider"
 	import tuiLoadmore from "../../components/loadmore/loadmore"
 	import tuiNomore from "../../components/nomore/nomore"
+	import tuiTips from "../../components/extend/tips/tips"
+	import { goodRecommend } from "../../api/good";
+	import { orderCartList, orderCartSave, orderCartDelete, orderCartCheck } from "../../api/orderCart";
+	import calculation from "../../common/calculation"
 	export default {
 		components: {
 			tuiSwipeAction,
@@ -129,7 +129,8 @@
 			tuiIcon,
 			tuiDivider,
 			tuiLoadmore,
-			tuiNomore
+			tuiNomore,
+			tuiTips
 		},
 		props: {
 			isTabBar: {
@@ -139,176 +140,33 @@
 		},
 		data() {
 			return {
-				dataList: [{
-					id: 1,
-					buyNum:2
-				}, {
-					id: 2,
-					buyNum:1
-				}],
-				actions: [{
-					name: '收藏',
-					width: 64,
-					color: '#fff',
-					fontsize: 28,
-					background: '#FFC600'
-				},
-					{
-						name: '看相似',
-						color: '#fff',
-						fontsize: 28,
-						width: 64,
-						background: '#FF7035'
-					},
-					{
-						name: '删除',
-						color: '#fff',
-						fontsize: 28,
-						width: 64,
-						background: '#F82400'
-					}
-				],
-				actions2: [{
-					name: '看相似',
-					color: '#fff',
-					fontsize: 28,
-					width: 64,
-					background: '#FF7035'
-				},
-					{
-						name: '删除',
-						color: '#fff',
-						fontsize: 28,
-						width: 64,
-						background: '#F82400'
-					}
-				],
+				dataList: [],
 				isEdit: false,
-				productList: [{
-					img: 1,
-					name: "欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜 30ml（欧莱雅彩妆 BB霜 粉BB 遮瑕疵 隔离）",
-					sale: 599,
-					factory: 899,
-					payNum: 2342
-				},
-					{
-						img: 2,
-						name: "德国DMK进口牛奶  欧德堡（Oldenburger）超高温处理全脂纯牛奶1L*12盒",
-						sale: 29,
-						factory: 69,
-						payNum: 999
-					},
-					{
-						img: 3,
-						name: "【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红",
-						sale: 299,
-						factory: 699,
-						payNum: 666
-					},
-					{
-						img: 4,
-						name: "百雀羚套装女补水保湿护肤品",
-						sale: 1599,
-						factory: 2899,
-						payNum: 236
-					},
-					{
-						img: 5,
-						name: "百草味 肉干肉脯 休闲零食 靖江精制猪肉脯200g/袋",
-						sale: 599,
-						factory: 899,
-						payNum: 2399
-					},
-					{
-						img: 6,
-						name: "短袖睡衣女夏季薄款休闲家居服短裤套装女可爱韩版清新学生两件套 短袖粉色长颈鹿 M码75-95斤",
-						sale: 599,
-						factory: 899,
-						payNum: 2399
-					},
-					{
-						img: 1,
-						name: "欧莱雅（LOREAL）奇焕光彩粉嫩透亮修颜霜",
-						sale: 599,
-						factory: 899,
-						payNum: 2342
-					},
-					{
-						img: 2,
-						name: "德国DMK进口牛奶",
-						sale: 29,
-						factory: 69,
-						payNum: 999
-					},
-					{
-						img: 3,
-						name: "【第2支1元】柔色尽情丝柔口红唇膏女士不易掉色保湿滋润防水 珊瑚红",
-						sale: 299,
-						factory: 699,
-						payNum: 666
-					},
-					{
-						img: 4,
-						name: "百雀羚套装女补水保湿护肤品",
-						sale: 1599,
-						factory: 2899,
-						payNum: 236
-					}
-				],
-				pageIndex: 1,
-				loadding: false,
-				pullUpOn: true
+				productList: [],
+				sumMoney: 0,
+				sumCount: 0,
+				selectCount: 0,
+				loading: false,
+				isLoadMore: true,
+				params: {
+					page: 1,
+					count: 20
+				}
 			}
 		},
 		methods: {
-			changeNum: function(e) {
-				this.dataList[e.index].buyNum=e.value
-			},
-			handlerButton: function(e) {
-				let index = e.index;
-				let item = e.item;
-				this.tui.toast(`商品id：${item.id}，按钮index：${index}`);
-			},
-			editGoods: function() {
-				// #ifdef H5 || MP
-				this.isEdit = !this.isEdit;
-				// #endif
-			},
-			detail: function() {
-				uni.navigateTo({
-					url: '../../productDetail/productDetail'
-				})
-			},
-			btnPay(){
-				uni.navigateTo({
-					url: '../submitOrder/submitOrder'
-				})
+			init() {
+				this.getOrderCartList();
+				this.loadMore();
 			},
 			pullDownRefresh() {
-				let loadData = JSON.parse(JSON.stringify(this.productList));
-				loadData = loadData.splice(0, 10)
-				this.productList = loadData;
-				this.pageIndex = 1;
-				this.pullUpOn = true;
-				this.loadding = false
-				uni.stopPullDownRefresh()
+				this.productList = [];
+				this.params.page = 1;
+				this.isLoadMore = true;
+				this.init();
 			},
 			reachBottom() {
-				if (!this.pullUpOn) return;
-				this.loadding = true;
-				if (this.pageIndex == 4) {
-					this.loadding = false;
-					this.pullUpOn = false
-				} else {
-					let loadData = JSON.parse(JSON.stringify(this.productList));
-					loadData = loadData.splice(0, 10)
-					if (this.pageIndex == 1) {
-						loadData = loadData.reverse();
-					}
-					this.productList = this.productList.concat(loadData);
-					this.pageIndex = this.pageIndex + 1;
-					this.loadding = false
-				}
+				this.loadMore();
 			},
 			navigationBarButtonTap() {
 				this.isEdit = !this.isEdit;
@@ -319,6 +177,219 @@
 					text: text
 				});
 				// #endif
+			},
+			calculation() {
+				let sumMoney = 0;
+				let sumCount = 0;
+				for (let item of this.dataList) {
+					if (item.is_check === 1) {
+						let money = calculation.accMul(item.count, item.shop_price);
+						sumMoney = calculation.accAdd(sumMoney, money);
+						sumCount++;
+					}
+				}
+				this.sumCount = sumCount;
+				this.sumMoney = sumMoney;
+			},
+			allSelect() {
+				let dataList= [];
+				let is_select = this.selectCount === this.dataList.length ? 0 : 1;
+				let selectCount = 0;
+				for (let item of this.dataList) {
+					item.is_select = is_select;
+					dataList.push(item);
+					selectCount++;
+				}
+				this.selectCount = is_select === 1 ? selectCount : 0;
+				this.dataList = dataList;
+			},
+			allClick() {
+				let good_ids= [];
+				let dataList= [];
+				let is_check = this.sumCount === this.dataList.length ? 0 : 1;
+				for (let item of this.dataList) {
+					good_ids.push(item.good_id);
+					item.is_check = is_check;
+					dataList.push(item);
+				}
+				this.dataList = dataList;
+				this.calculation();
+				this.$tui.showLoading();
+				orderCartCheck({ good_ids: good_ids, is_check: 1})
+						.then(res => {
+							this.$tui.hideLoading();
+							if (res.code > 0) {
+								this.$tui.toast(res.message);
+								return false;
+							}
+						})
+						.catch(() => {
+							this.$tui.hideLoading();
+						})
+			},
+			goodSelect(index, item) {
+				item.is_select = item.is_select === 1 ? 0 : 1;
+				this.dataList.splice(index, 1, item);
+				let selectCount = 0;
+				for (let item of this.dataList) {
+					if (item.is_select === 1) {
+						selectCount++;
+					}
+				}
+				this.selectCount = selectCount;
+			},
+			deleteGood() {
+				let good_ids= [];
+				let indexs = [];
+				let index = 0;
+				for (let item of this.dataList) {
+					if (item.is_select === 1) {
+						good_ids.push(item.good_id);
+						indexs.push(index);
+					}
+					index++;
+				}
+				if (good_ids.length === 0) {
+					this.$tui.toast("请选择要删除的商品");
+					return false;
+				}
+				uni.showModal({
+					title: '提示',
+					content: '确认删除商品？',
+					success: (res) => {
+						if (res.confirm) {
+							this.$tui.showLoading();
+							orderCartDelete({ good_ids: good_ids})
+									.then(res => {
+										this.$tui.hideLoading();
+										if (res.code > 0) {
+											this.$tui.toast(res.message);
+											return false;
+										}
+										this.$tui.toast("删除成功");
+										for (let item of indexs) {
+											this.dataList.splice(item, 1);
+										}
+										this.calculation();
+									})
+									.catch(() => {
+										this.$tui.hideLoading();
+									})
+						}
+					}
+				});
+			},
+			goodClick(index, item) {
+				item.is_check = item.is_check === 1 ? 0 : 1;
+				this.dataList.splice(index, 1, item);
+				this.calculation();
+				this.$tui.showLoading();
+				orderCartCheck({ good_ids: [item.good_id], is_check: item.is_check})
+					.then(res => {
+						this.$tui.hideLoading();
+						if (res.code > 0) {
+							this.$tui.toast(res.message);
+							return false;
+						}
+					})
+					.catch(() => {
+						this.$tui.hideLoading();
+					})
+			},
+			changeNum(e) {
+				let item = this.dataList[e.index];
+				const data = {
+					good_id: item.good_id,
+					count: e.value
+				};
+				if (data.count <= 0) {
+					uni.showModal({
+						title: '提示',
+						content: '确认删除商品？',
+						success: (res) => {
+							if (res.confirm) {
+								this.$tui.showLoading();
+								orderCartDelete({ good_ids: [item.good_id]})
+									.then(res => {
+										this.$tui.hideLoading();
+										if (res.code > 0) {
+											this.$tui.toast(res.message);
+											return false;
+										}
+										this.$tui.toast("删除成功");
+										this.dataList.splice(index, 1);
+										this.calculation();
+									})
+									.catch(() => {
+										this.$tui.hideLoading();
+									})
+							}
+						}
+					});
+					return false;
+				}
+				this.$tui.showLoading();
+				orderCartSave(data)
+					.then(res => {
+						this.$tui.hideLoading();
+						if (res.code > 0) {
+							this.$tui.toast(res.message);
+							return false;
+						}
+						item.count = e.value;
+						item.money = calculation.accMul(item.count, item.shop_price);
+						this.dataList.splice(e.index, 1, item);
+						this.calculation();
+					})
+					.catch(() => {
+						this.$tui.hideLoading();
+					})
+			},
+			editGoods() {
+				// #ifdef H5 || MP
+				this.isEdit = !this.isEdit;
+				// #endif
+			},
+			goodDetail(item) {
+				this.$tui.navigateTo("productDetail/productDetail?good_id=" + item.good_id);
+			},
+			btnPay() {
+				uni.navigateTo({
+					url: '../submitOrder/submitOrder'
+				})
+			},
+			getOrderCartList() {
+				orderCartList()
+					.then(res => {
+						this.dataList = res.data || [];
+						this.calculation();
+					})
+			},
+			loadMore() {
+				if (!this.isLoadMore) {
+					return false;
+				}
+				this.getRecommendGood();
+			},
+			getRecommendGood() {
+				if (this.loading) {
+					return false;
+				}
+				this.loading = true;
+				this.$tui.showLoading("加载中", true);
+				goodRecommend(this.params)
+						.then(res => {
+							this.loading = false;
+							this.$tui.hideLoading();
+							this.params.page++;
+							const list = res.data || [];
+							for (let item of list) {
+								this.productList.push(item);
+							}
+							if (list.length < this.params.count) {
+								this.isLoadMore = false;
+							}
+						})
 			}
 		}
 	}
@@ -405,8 +476,8 @@
 
 	/* #endif */
 	.tui-goods-img {
-		width: 220rpx;
-		height: 220rpx !important;
+		width: 200rpx;
+		height: 200rpx !important;
 		border-radius: 12rpx;
 		flex-shrink: 0;
 		display: block;
@@ -556,7 +627,7 @@
 		padding: 0 30rpx;
 		box-sizing: border-box;
 		font-size: 24rpx;
-		z-index: 99999;
+		z-index: 900;
 	}
 
 	.tui-tabbar::before {
@@ -659,5 +730,10 @@
 		padding-top: 10rpx;
 		font-size: 24rpx;
 		color: #656565;
+	}
+
+	.tui-goods-attr-tag {
+		margin-right: 20rpx;
+		font-size: 26rpx;
 	}
 </style>

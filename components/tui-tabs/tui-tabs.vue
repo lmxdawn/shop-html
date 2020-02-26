@@ -41,15 +41,8 @@
 			},
 			//px
 			top: {
-				type: Number
-					// #ifndef H5
-					,
+				type: Number,
 				default: 0
-					// #endif
-					// #ifdef H5
-					,
-				default: 44
-				// #endif
 			},
 			//是否去掉底部线条
 			unlined: {
