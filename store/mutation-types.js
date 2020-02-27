@@ -16,3 +16,4 @@ export const AD_PARAMS = "AD_PARAMS";
 export const SUBMIT_ORDER_ADDRESS = "SUBMIT_ORDER_ADDRESS";
 // 购物车数量
 export const CART_COUNT = "CART_COUNT";
+export const CART_COUNT_INIT = "CART_COUNT_INIT";

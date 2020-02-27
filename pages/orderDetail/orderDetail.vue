@@ -106,7 +106,6 @@
 	import tuiListCell from "../../components/list-cell/list-cell"
 	import { orderRead, orderCancel } from "../../api/order"
 	import { orderPayWeChatMiniApp } from "../../api/orderPay"
-	import {orderAddressDel} from "../../api/orderAddress";
 	export default {
 		components: {
 			tuiIcon,
@@ -132,12 +131,15 @@
 		methods: {
 			// 0-待付款 1-付款成功 2-待收货 3-订单已完成 4-交易关闭
 			getImg(status) {
-				return this.$tui.staticUrl() + "/static/images/order/" + ["img_order_payment3x.png", "img_order_send3x.png", "img_order_received3x.png",
-					"img_order_signed3x.png", "img_order_closed3x.png"
-				][status]
+				return this.$tui.staticUrl() + "/static/images/order/" +
+						["img_order_payment3x.png",
+							"img_order_send3x.png", "img_order_received3x.png",
+							"img_order_signed3x.png", "img_order_closed3x.png",
+							"img_order_signed3x.png"
+						][status]
 			},
 			getStatusText(status) {
-				return ["等待您付款", "付款成功", "待收货", "订单已完成", "交易关闭"][status]
+				return ["等待您付款", "付款成功", "待收货", "订单已完成", "交易关闭", "交易成功"][status]
 			},
 			getReason(status) {
 				return ["剩余时间", "等待卖家发货", "等待用户收货", "", "超时未付款，订单自动取消"][status]

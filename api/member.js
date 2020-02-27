@@ -1,10 +1,9 @@
 import request from "../utils/request";
 
 // 获取用户信息
-export function memberInfo(data) {
+export function memberInfo() {
     return request({
-        url: "/api/user/index/info",
-        method: "post",
-        data: data
+        url: "/api/member/member/info",
+        method: "get"
     });
 }

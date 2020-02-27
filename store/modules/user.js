@@ -9,12 +9,14 @@ const state = {
         member_id: parseInt(member.member_id) || 0,
         name: member.name || "",
         avatar: member.avatar || "",
-    }
+    },
+    cartCount: 0, // 购物车数量
 };
 
 // getters
 const getters = {
     memberInfo: state => state.memberInfo,
+    cartCount: state => state.cartCount,
 };
 
 // actions
@@ -37,11 +39,10 @@ const actions = {
             // 获取用户信息
             memberInfo()
                 .then(res => {
-                    if (res.code !== 200) {
+                    if (res.code > 0) {
                         reject(res.message);
                         return;
                     }
-                    // console.log(res);
                     let data = res.data;
 
                     let info = {
@@ -49,7 +50,9 @@ const actions = {
                         name: data.name || "",
                         avatar: data.avatar || "",
                     };
+                    let cartCount = data.cart_count || 0;
                     commit(types.MEMBER_INFO, info);
+                    commit(types.CART_COUNT, cartCount);
                     resolve(info);
                 })
                 .catch(err => {
@@ -58,6 +61,12 @@ const actions = {
 
         });
     },
+    setCartCount({ commit }, type) {
+        commit(types.CART_COUNT, type);
+    },
+    initCartCount({ commit }, count) {
+        commit(types.CART_COUNT_INIT, count);
+    }
 };
 
 // mutations
@@ -70,6 +79,34 @@ const mutations = {
     //设置用户信息
     [types.MEMBER_INFO](state, memberInfo) {
         state.memberInfo = memberInfo;
+    },
+    // 购物车
+    [types.CART_COUNT](state, type) {
+        if (type === 1) {
+            state.cartCount++;
+        } else if (type > 1){
+            state.cartCount = type;
+        } else {
+            if (state.cartCount > 0) {
+                state.cartCount--;
+            }
+        }
+        if (state.cartCount > 0) {
+            uni.setTabBarBadge({
+                index: 2,
+                text: state.cartCount + ""
+            })
+        }
+    },
+    // 购物车
+    [types.CART_COUNT_INIT](state, count) {
+        state.cartCount = count;
+        if (state.cartCount > 0) {
+            uni.setTabBarBadge({
+                index: 2,
+                text: state.cartCount + ""
+            })
+        }
     }
 };
 export default {

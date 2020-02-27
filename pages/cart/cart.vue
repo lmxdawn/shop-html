@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
-		<tui-tips v-if="dataList.length === 0" style="margin-top: 100rpx;" :fixed="false" imgUrl="/static/images/toast/img_nodata.png">购物车空空如也，赶紧去逛逛吧~</tui-tips>
-		<view v-else>
+		<tui-tips v-if="isInit && dataList.length === 0" style="margin-top: 100rpx;" :fixed="false" imgUrl="/static/images/toast/img_nodata.png">购物车空空如也，赶紧去逛逛吧~</tui-tips>
+		<view v-else-if="isInit">
 			<!-- #ifdef MP || H5-->
 			<view class="tui-edit-goods">
 				<view>购物车共<text class="tui-goods-num">{{dataList.length}}</text>件商品</view>
@@ -147,6 +147,7 @@
 				sumMoney: 0,
 				sumCount: 0,
 				selectCount: 0,
+				isInit: false,
 				loading: false,
 				isLoadMore: true,
 				params: {
@@ -402,8 +403,9 @@
 							cartCount += item.count;
 						}
 						if (cartCount > 0) {
-							this.$store.dispatch("setCartCount", cartCount);
+							this.$store.dispatch("initCartCount", cartCount);
 						}
+						this.isInit = true;
 					})
 			},
 			loadMore() {

@@ -262,6 +262,7 @@
 		width: 128rpx;
 		height: 128rpx;
 		display: block;
+		border-radius: 50%;
 	}
 
 	.tui-info {

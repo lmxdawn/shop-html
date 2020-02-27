@@ -44,7 +44,7 @@
 						<view class="tui-btn-ml" v-if="item.status === 1 || item.status === 2" @tap.stop="orderOK(index, item)">
 							<tui-button type="black" :plain="true" width="148rpx" height="56rpx" :size="26" shape="circle">确认收货</tui-button>
 						</view>
-						<view class="tui-btn-ml" v-if="item.status === 3">
+						<view class="tui-btn-ml" v-if="item.status === 3" @tap.stop="commentClick(item)">
 							<tui-button type="black" :plain="true" width="148rpx" height="56rpx" :size="26" shape="circle">评价晒单</tui-button>
 						</view>
 						<view class="tui-btn-ml" v-if="item.status !== 0">
@@ -160,6 +160,9 @@
 			},
 			orderDetail(item) {
 				this.$tui.navigateTo("orderDetail/orderDetail?order_num=" + item.order_num);
+			},
+			commentClick(item) {
+				this.$tui.navigateTo("comment/add?order_num=" + item.order_num);
 			},
 			orderOK(index, item) {
 				const data = {

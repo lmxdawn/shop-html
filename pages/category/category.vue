@@ -243,8 +243,8 @@
 								this.$tui.toast(res.message);
 								return false;
 							}
-							this.$tui.toast("加入购物车成功");
 							this.$store.dispatch("setCartCount", 1);
+							this.$tui.toast("加入购物车成功");
 						})
 						.catch(() => {})
 			},

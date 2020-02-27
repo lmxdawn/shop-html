@@ -13,6 +13,8 @@
 	export default {
 		name: "tuiRate",
 		props: {
+			//父级的下标
+			index: Number,
 			//数量
 			quantity: {
 				type: Number,
@@ -75,7 +77,8 @@
 				}
 				const index = e.currentTarget.dataset.index;
 				this.$emit('change', {
-					index: Number(index) + 1
+					value: Number(index) + 1,
+					index: this.index
 				})
 			},
 			touchMove(e) {
@@ -94,7 +97,8 @@
 				let index = Math.ceil(distance / this.size);
 				index = index > this.count ? this.count : index;
 				this.$emit('change', {
-					index: index
+					value: index,
+					index: this.index
 				})
 			}
 		},

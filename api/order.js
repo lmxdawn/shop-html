@@ -54,3 +54,12 @@ export function orderSubmitGoodList(data) {
     });
 }
 
+// 评价
+export function orderComment(data) {
+    return request({
+        url: "/api/order/order/comment",
+        method: "post",
+        data: data
+    });
+}
+

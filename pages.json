@@ -195,6 +195,29 @@
 				"enablePullDownRefresh": true,
 				"h5": {
 					"titleNView": false
+				},
+				"app-plus": {
+					// #ifdef APP-PLUS
+					"titleNView": {
+						"padding-right": "15px",
+						"buttons": [{
+							"text": "发布",
+							"float": "right",
+							"width": "auto",
+							"fontSize": "15px",
+							"color": "#333"
+						}]
+					}
+					// #endif
+				}
+			}
+		},
+		{
+			"path": "pages/comment/add",
+			"style": {
+				"navigationBarTitleText": "发表评价",
+				"h5": {
+					"titleNView": false
 				}
 			}
 		},
