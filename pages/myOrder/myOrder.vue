@@ -130,7 +130,7 @@
 			this.params.status = options.status;
 			let count = 0;
 			for (let item of this.tabs) {
-				if (options.status == item.status) {
+				if (options.status && options.status == item.status) {
 					this.currentTab = count;
 				}
 				count++;
