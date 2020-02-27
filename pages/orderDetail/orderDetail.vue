@@ -10,7 +10,7 @@
 						 bgcolor="transparent" v-if="order.status===0"></tui-countdown>
 					</view>
 				</view>
-				<image :src="getImg(order.status)" class="tui-status-img" mode="widthFix"></image>
+				<image v-if="order.id" :src="getImg(order.status)" class="tui-status-img" mode="widthFix"></image>
 			</view>
 		</view>
 		<tui-list-cell :last="true" :hover="false">
